@@ -36,15 +36,15 @@ function move(){
 	oldsnake[0][1]=parseInt(document.getElementById("sn_head").style.top);
 	var allParts=document.getElementsByClassName("snake");
 	for (var i=1; i<allParts.length; i++) {
-  oldsnake[i][0]=parseInt(allParts[i-1].style.left);
-  oldsnake[i][1]=parseInt(allParts[i-1].style.top);
-}
+		oldsnake[i][0]=parseInt(allParts[i-1].style.left);
+		oldsnake[i][1]=parseInt(allParts[i-1].style.top);
+	}
 
 	switch(dir){
-	 case 0: snake[0][0]=snake[0][0]-10;break;
-	 case 1: snake[0][1]=snake[0][1]-10;break;
-	 case 2: snake[0][0]=snake[0][0]+10;break;
-	 case 3: snake[0][1]=snake[0][1]+10;break;
+		case 0: snake[0][0]=snake[0][0]-10;break;
+		case 1: snake[0][1]=snake[0][1]-10;break;
+		case 2: snake[0][0]=snake[0][0]+10;break;
+		case 3: snake[0][1]=snake[0][1]+10;break;
 	}
 	if(snake[0][0]<0)snake[0][0]=310; if(snake[0][0]>310)snake[0][0]=0;
 	if(snake[0][1]<0)snake[0][1]=230; if(snake[0][1]>230)snake[0][1]=0;
@@ -71,20 +71,20 @@ function testCollision(){
 }
 
 function growBody(){
- s=document.createElement("div");
- s.className="snake";
- document.getElementById("board").appendChild(s);
- snake[snake.length]=[];
- oldsnake[oldsnake.length]=[];
+	s=document.createElement("div");
+	s.className="snake";
+	document.getElementById("board").appendChild(s);
+	snake[snake.length]=[];
+	oldsnake[oldsnake.length]=[];
 }
 
 function turn(ev){
 	if(ev.keyCode==37){
-	dir-=1;
-	if(dir<0)dir=3;
+		dir-=1;
+		if(dir<0)dir=3;
 	}
 	if(ev.keyCode==39){
-	dir+=1;
-	if(dir>3)dir=0;
+		dir+=1;
+		if(dir>3)dir=0;
 	}
 }
