@@ -11,6 +11,10 @@
 	<canvas id="canvasGuest" width="512" height="512" style="display:none;"></canvas> 
 	<img id="picHost" src="host.jpg" />
 	<img id="picGuest" src="guest.jpg" />	
+	
+	
+	This code appears to work only remotely; locally it returns a DOM Exception:
+	DOMException: Failed to execute 'getImageData' on 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data.
 
 */
 
