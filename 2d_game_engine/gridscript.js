@@ -1,3 +1,9 @@
+/*
+2022-10-23 : reshapes maps and perspective: top down rpg.
+2022-10-22 : first draft. rendering functions. 2D platformer
+
+*/
+
 /* global variables */
 var gameLoop;
 var gameFPS = 33;
@@ -9,29 +15,34 @@ var gameX = 0;
 var gameY = 0;
 var gameOriginX = 0;
 var gameOriginY = 0;
+var gameMoveSpeed = 10;
 var gameMapWidth = 100; // tiles long
 var gameMapHeight = 200; // tiles deep
 var gameMap = [new Array()];
-var gameTileSize = 48;
+var gameTileSize = 32;
+/*	https://opengameart.org/content/lots-of-free-2d-tiles-and-sprites-by-hyptosis
+		Credit to Hyptosis and Zabin from OGA.	*/
 var gameImage = [];
-
-// --- DEBUG FUNCTIONS ---
+var gameTilemap = [];
+	gameTilemap['&grass01'] = '640;0';
+	gameTilemap['&grass02'] = '384;0';
+	gameTilemap['&dirt01'] = '0;576';
+	gameTilemap['&wall01'] = '864;512';
+// initialize full map array (blank)
 for(let y=0; y<gameMapHeight; y++){
 	gameMap[y] = new Array();
 	for(let x=0; x<gameMapWidth; x++){
-		gameMap[y][x] = "black"; // background
+		gameMap[y][x] = "";
 	}
 }
-// add dirt
-var a = 1;
-for(let y=10; y<gameMapHeight; y++){
-	gameMap[y] = new Array();
-	for(let x=0; x<gameMapWidth; x++){
-		a = 1; //3-a;
-		if(x>5){
-			gameMap[y][x] = "&dirt"; // background
+
+// sample map (leave a black border around)
+for(let y=1; y<gameMapHeight-2; y++){
+	for(let x=1; x<gameMapWidth-2; x++){
+		if(Math.random()>0.33){
+			gameMap[y][x] = "&dirt01";
 		}else{
-			gameMap[y][x] = "black";
+			gameMap[y][x] = "&grass01";
 		}
 	}
 }
@@ -39,22 +50,11 @@ for(let y=10; y<gameMapHeight; y++){
 
 
 function debug(){
-	var i = document.createElement("img");
-	i.src = "./res/mario.gif";
-	i.style.position = "absolute";
-	i.style.top = "355px";
-	i.style.left = "500px";
-	i.id = "mario";
-	document.body.append(i);
 	createScreen();
-	loadImage("dirt","./res/dirt_01.gif");
 	startGameLoop();
 }
 
 // ---  CORE FUNCTIONS ---
-
-// draw ONLY what is in scope
-// gameX,gameY define the top left corner of the view scope (moves when character moves)
 
 function loadImage(imageName,imageURL){
 	var i = document.createElement("img");
@@ -66,20 +66,21 @@ function loadImage(imageName,imageURL){
 	gameImage['&'+i.id] = i;
 }
 
+function ifbi(n,z){
+	return (n>z?z:n)
+}
+
 function drawScreen(){
 	gameCtx.fillStyle = "black";
 	gameCtx.clearRect(0,0,gameWidth,gameHeight);
 	gameCtx.fillRect(0,0,gameWidth,gameHeight);
-
-	for(let y=Math.floor(gameY/gameTileSize); y<Math.floor(gameY/gameTileSize)+Math.floor(gameHeight/gameTileSize)+2; y++){
-		for(let x=Math.floor(gameX/gameTileSize); x<Math.floor(gameX/gameTileSize)+Math.floor(gameWidth/gameTileSize)+2; x++){
-			// draw plain
-			// gameCtx.fillStyle = gameMap[y][x];
-			// gameCtx.fillRect(x*gameTileSize,y*gameTileSize,gameTileSize,gameTileSize);
-			// draw sprite
+	for(let y=Math.floor(gameY/gameTileSize); y<ifbi(Math.floor(gameY/gameTileSize)+Math.floor(gameHeight/gameTileSize)+2,gameMapHeight); y++){
+		for(let x=Math.floor(gameX/gameTileSize); x<ifbi(Math.floor(gameX/gameTileSize)+Math.floor(gameWidth/gameTileSize)+2,gameMapWidth); x++){
 			if(gameMap[y][x]!=""){
 				if(gameMap[y][x].substr(0,1)=="&"){
-					gameCtx.drawImage(gameImage[gameMap[y][x]], (x*gameTileSize)-gameX, y*gameTileSize, gameTileSize, gameTileSize);
+					var tileX = gameTilemap[gameMap[y][x]].split(";")[0];
+					var tileY = gameTilemap[gameMap[y][x]].split(";")[1];
+					gameCtx.drawImage(document.getElementById('tmap'), tileX, tileY, gameTileSize, gameTileSize, (x*gameTileSize)-gameX, (y*gameTileSize-gameY), gameTileSize, gameTileSize);
 				}
 			}
 		}
@@ -104,7 +105,12 @@ function createScreen(){
 	gameCtx.fillStyle = 'black';
 	gameCtx.fillRect(0,0,gameWidth,gameHeight);
 	document.body.append(b);
-  	b.addEventListener("keydown", keyPressed ,false);
+	var i = document.createElement("img");
+		i.src = "./res/tilemap.png";
+		i.style.display = "none";
+		i.id = "tmap";
+		document.body.append(i);
+	b.addEventListener("keydown", keyPressed ,false);
 	b.focus();
 }
 
@@ -119,12 +125,16 @@ function keyPressed(e){
 
 function move(d){
 	if(d=='left' && gameX > 0){
-		document.getElementById("mario").style.transform="scaleX(-1)";
-		gameX -= 5;
+		gameX -= gameMoveSpeed;	// this moves the viewport, but what about the character? cannot always be centered
 	}
-	if(d=='right'){
-		document.getElementById("mario").style.transform="scaleX(1)";
-		gameX += 5;
+	if(d=='right' && (Math.floor(gameX/gameTileSize)+Math.floor(gameWidth/gameTileSize)+2)<=gameMapWidth){
+		gameX += gameMoveSpeed;	// this moves the viewport, but what about the character? cannot always be centered
+	}
+	if(d=='up' && gameY > 0){
+		gameY -= gameMoveSpeed;	// this moves the viewport, but what about the character? cannot always be centered
+	}
+	if(d=='down' && (Math.floor(gameY/gameTileSize)+Math.floor(gameHeight/gameTileSize)+2)<=gameMapHeight){
+		gameY += gameMoveSpeed;	// this moves the viewport, but what about the character? cannot always be centered
 	}
 }
 
