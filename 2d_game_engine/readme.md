@@ -5,7 +5,7 @@
 <li>new functions: changeFramerate(n), resizeGame(w,h),drawDebug() (toggle via F10)</li>
 <li>suggestion to move character : create a charMap (same size as map) and use it to move CHARACTER. can then be surimposed to world map to test collision</li>
 </ul>
-<img src="https://user-images.githubusercontent.com/4015046/197404656-7497e484-c0c8-4c96-93c0-05def9b2d47e.JPG">
+<img src="https://user-images.githubusercontent.com/4015046/197404656-7497e484-c0c8-4c96-93c0-05def9b2d47e.JPG" width=50% height=50%>
 <h2>2022-10-22</h2>
 <ul>
 <li>first draft</li>
