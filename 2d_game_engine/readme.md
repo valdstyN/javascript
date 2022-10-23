@@ -5,7 +5,9 @@
 <li>new functions: changeFramerate(n), resizeGame(w,h),drawDebug() (toggle via F10)</li>
 <li>suggestion to move character : create a charMap (same size as map) and use it to move CHARACTER. can then be surimposed to world map to test collision</li>			
 </ul>
-
-2022-10-22 : 	-first draft
-							- rendering functions
-							- 2D platformer
+<h2>2022-10-22</h2>
+<ul>
+<li>first draft</li>
+<li>rendering functions</li>
+<li>2D platformer</li>
+</ul>
