@@ -1,14 +1,3 @@
-/*
-2022-10-23 : 	- reshapes maps and perspective: top down rpg.
-							- added tilemap system
-							-	new functions: 	changeFramerate(n)
-																resizeGame(w,h)
-																drawDebug() (toggle via F10)
-							- suggestion to move character : create a charMap (same size as map) and use it to move CHARACTER. can then be surimposed to world map to test collision
-2022-10-22 : 	-first draft
-							- rendering functions
-							- 2D platformer
-*/
 
 /* global variables */
 var gameLoop;
@@ -168,18 +157,18 @@ function createScreen(){
 }
 
 function keyPressed(e){
-	switch(e.keyCode){
+switch(e.keyCode){
     case 38:move('up');break;
     case 40:move('down');break;
     case 37:move('left');break;
     case 39:move('right');break;
     case 121:
-			e.preventDefault();
-			e.stopPropagation();
-			gameDebugMode=3-gameDebugMode;
-			break;
+	e.preventDefault();
+	e.stopPropagation();
+	gameDebugMode=3-gameDebugMode;
+	break;
     case 122:toggleFullscreen();break;
-	}
+}
 }
 
 function move(d){
