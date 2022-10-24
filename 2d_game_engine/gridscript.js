@@ -21,8 +21,6 @@ var gameMapHeight = 200; // tiles deep			-- will depend on the map loaded (need 
 var gameMap = [new Array()];
 var gameMapL2 = [new Array()];	// top layer (allows to draw on top of first layer - sprites, roofs, trees...)
 var gameTilemapSize = 32; // fixed - this is used to crop the tilemap file
-/*	https://opengameart.org/content/lots-of-free-2d-tiles-and-sprites-by-hyptosis
-		Credit to Hyptosis and Zabin from OGA.	*/
 var gameImage = [];
 var gameTilemap = [];
 
