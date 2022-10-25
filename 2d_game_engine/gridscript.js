@@ -12,11 +12,13 @@ var gameY = 0;
 var gameDebugMode = 1;
 var gameOriginX = 0; // unused
 var gameOriginY = 0; // unused
-var gameCharMove = false;
+var gameCharInput = true;
 var gameCharX = gameTileSize*5;		// dynamically updating gameTileSize will mess up the X coord
 var gameCharY = gameTileSize*5;		// dynamically updating gameTileSize will mess up the Y coord
+var gameCharTileSize = 77;	// based on the charmap (png)
 var gameCharTileX = 5;
 var gameCharTileY = 5;
+var gameCharDirection = 3; // 1 top 2 right 3 down 4 left
 var gameMoveSpeed = gameTileSize; // 10; if the value is different, the character will move freely, not within the map grid
 var gameMapWidth = 100; // tiles long				-- will depend on the map loaded (need to update initialization)
 var gameMapHeight = 200; // tiles deep			-- will depend on the map loaded (need to update initialization)
@@ -62,7 +64,7 @@ var passThroughTile = [
 	'&grass01',
 	'&grass02',
 	'&grass03',
-  	'&dirt01',
+  '&dirt01',
 	'&path01','&path02','&path03','&path04',
 	'&roof03','&roof04',		// allow to pass behind
 	'&door02'								// allow to stand in the entrance
@@ -97,9 +99,8 @@ function StartGame(){
 	createScreen();
 	startGameLoop();
 	changeFramerate(60);
+	changeTileSize(48);
 }
-
-// ---  CORE FUNCTIONS ---
 
 function loadImage(imageName,imageURL){
 	var i = document.createElement("img");
@@ -112,8 +113,7 @@ function loadImage(imageName,imageURL){
 }
 
 function ifbi(n,z){
-	// if bigger
-	// this function may not be required as we added a check in movement/input
+	// if bigger; this function may not be required as we added a check in movement/input
 	return (n>z?z:n)
 }
 
@@ -136,7 +136,16 @@ function drawScreen(){
 
 			// DRAW CHARACTER (only once!)
 			if(gameCharTileY==y && gameCharTileX==x){
-				gameCtx.drawImage(gameImage['&char01'], gameCharX, gameCharY, gameTileSize, gameTileSize);
+				let dx = 0;
+				let dy = 0;
+				// probably can make this a function
+				switch(gameCharDirection){
+					case 1:	dx = 308; dy = 231; break;
+					case 2:	dx = 539; dy = 154; break;
+					case 3:	dx = 308; dy = 1; break;
+					case 4:	dx = 539; dy = 77; break;
+				}
+				gameCtx.drawImage(gameImage['&hero'], dx, dy, gameCharTileSize, gameCharTileSize, gameCharX, gameCharY,  gameTileSize, gameTileSize);
 			}
 
 			// DRAw LAYER 2
@@ -149,6 +158,15 @@ function drawScreen(){
 			}
 		}
 	}
+
+	// simulate night time
+	if(new Date().getHours()>21 || new Date().getHours()<6){
+		gameCtx.globalAlpha = 0.2;
+	  gameCtx.fillStyle = "blue";
+	  gameCtx.fillRect(0,0,gameWidth,gameHeight);
+	  gameCtx.globalAlpha = 1.0;
+	}
+
 	// DRAW REST
 	drawDebug();
 }
@@ -171,12 +189,16 @@ function createScreen(){
 	gameCtx.fillStyle = 'black';
 	gameCtx.fillRect(0,0,gameWidth,gameHeight);
 	document.body.append(b);
+
+  	// need to externalize this in a separate function
 	var i = document.createElement("img");
 		i.src = "./res/tilemap.png";
 		i.style.display = "none";
 		i.id = "tmap";
 		document.body.append(i);
-	loadImage("char01","./res/char01.gif");	// load main character
+	// this too
+	loadImage("hero","./res/hero.png");	// load main character
+
 	b.addEventListener("keydown", keyPressed ,false);
 	b.focus();
 }
@@ -187,18 +209,44 @@ function keyPressed(e){
 	    case 40:move('down');break;
 	    case 37:move('left');break;
 	    case 39:move('right');break;
+	    case 32:keyBind('action');break;
 	    case 121:
-			e.preventDefault();
-			e.stopPropagation();
-			gameDebugMode=3-gameDebugMode;
-			break;
+				e.preventDefault();
+				e.stopPropagation();
+				gameDebugMode=3-gameDebugMode;
+				break;
 	    case 122:toggleFullscreen();break;
 	}
 }
 
+function keyBind(e){
+	if(e=='action'){
+		// for example - character facing up and seeing a wall in top layer
+		if(gameCharDirection==1 && gameMapL2[gameCharTileY-1][gameCharTileX]=="&wall13"){
+			alert("this is a wall");
+		}
+	}
+}
+
+function printMessage(msg){
+
+}
+
+function walkingDelay(){
+	//gameCharInput = false;
+	//	var b = setInterval(function(){
+	//	gameCharX += 40/160;
+	//	},160/40);
+	//var a = setTimeout(function(){
+	//gameCharInput = true;
+	//	clearInterval(b); // does not always trigger at the same time
+	//},160);
+}
+
 function move(d){
 	// PRESS LEFT KEY
-	if(d=='left'){
+	if(d=='left' && gameCharInput){
+		gameCharDirection = 4;
 		if(collideWith(gameCharTileX-1,gameCharTileY)==0){
 			if(gameCharX<gameTileSize*2 && gameX > 0){
 				gameX -= gameMoveSpeed;	// this moves the viewport
@@ -210,7 +258,8 @@ function move(d){
 		}
 	}
 	// PRESS RIGHT KEY
-	if(d=='right' && !gameCharMove){
+	if(d=='right' && gameCharInput){
+		gameCharDirection = 2;
 		if(collideWith(gameCharTileX+1,gameCharTileY)==0){
 			if(gameCharX>gameWidth-(gameTileSize*3) && (Math.floor(gameX/gameTileSize)+Math.floor(gameWidth/gameTileSize)+2)<=gameMapWidth){
 				gameX += gameMoveSpeed;	// this moves the viewport
@@ -222,7 +271,8 @@ function move(d){
 		}
 	}
 	// PRESS UP KEY
-	if(d=='up'){
+	if(d=='up' && gameCharInput){
+		gameCharDirection = 1;
 	 	if(collideWith(gameCharTileX,gameCharTileY-1)==0){
 			if(gameCharY<gameTileSize*2 && gameY > 0){
 				gameY -= gameMoveSpeed;	// this moves the viewport
@@ -234,7 +284,8 @@ function move(d){
 		}
 	}
 	// PRESS DOWN KEY
-	if(d=='down'){
+	if(d=='down' && gameCharInput){
+		gameCharDirection = 3;
 		if(collideWith(gameCharTileX,gameCharTileY+1)==0){
 			if(gameCharY>gameHeight-(gameTileSize*3) && (Math.floor(gameY/gameTileSize)+Math.floor(gameHeight/gameTileSize)+2)<=gameMapHeight){
 				gameY += gameMoveSpeed;	// this moves the viewport
