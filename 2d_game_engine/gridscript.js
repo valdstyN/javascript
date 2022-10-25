@@ -283,6 +283,13 @@ function drawDebug(){
 	}
 }
 
+function changeTileSize(newSize){
+	gameTileSize = newSize;
+	gameCharX = gameCharTileX*newSize;
+	gameCharY = gameCharTileY*newSize;
+	gameMoveSpeed = newSize; // assuming we move tile by tile
+}
+
 function resizeGame(newWidth, newHeight){
 	document.getElementsByClassName("grid-main")[0].style.maxWidth = newWidth+"px";
 	document.getElementsByClassName("grid-main")[0].style.maxHeight = newHeight+"px";
