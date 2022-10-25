@@ -4,7 +4,8 @@
 <li>Improved performances by fixing drawing loop (debug information and character were redrawn for each X/Y</li>
 <li>Added a new character sprite and now manage character directions (facing up, right, bottom and left)</li>
 <li>Added function changeGameTileSize() to resize properly and adapt charGameX and charGameY. Can be used in the first section (not after scrolling)</li>
-<li>Updated CSS to center game and remove outline (focus)</li>
+<li>Added a filter to simulate night time (between 9pm and 6am)</li> 
+<li>Updated CSS to center game and remove outline (focus)</li> 
 <li>Added a little path along the house :-)</li>
 <li>Next: smooth character movement + GUI (message, inventory...)</li>
 </ul>
