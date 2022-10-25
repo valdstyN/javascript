@@ -62,7 +62,7 @@ var passThroughTile = [
 	'&grass01',
 	'&grass02',
 	'&grass03',
-  '&dirt01',
+  	'&dirt01',
 	'&path01','&path02','&path03','&path04',
 	'&roof03','&roof04',		// allow to pass behind
 	'&door02'								// allow to stand in the entrance
