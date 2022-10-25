@@ -2,7 +2,8 @@
 <ul>
 <li>Added collision system. An array lists the walkable textures. Everytime the player moves, we check if the ground layer (gameMap) has a "walkable" texture. If not, we check the textures of the top layer (gameMapL2). Using this combination, we can for example walk under the corner of the roof.</li>
 <li>Improved performances by fixing drawing loop (debug information and character were redrawn for each X/Y</li>
-<li>Added a little path along the house</li>
+<li>Updated CSS to center game and remove outline (focus)</li>
+<li>Added a little path along the house :-)</li>
 </ul>
 <img src="https://user-images.githubusercontent.com/4015046/197858162-288142b7-33b0-4ede-beeb-f4dd929f89a4.JPG" width=50% height=50%>
 <h2>2022-10-23</h2>
