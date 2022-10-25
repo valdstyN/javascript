@@ -9,7 +9,8 @@
 <li>Added a little path along the house :-)</li>
 <li>Next: smooth character movement + GUI (message, inventory...)</li>
 </ul>
-<img src="https://user-images.githubusercontent.com/4015046/197858162-288142b7-33b0-4ede-beeb-f4dd929f89a4.JPG" width=50% height=50%>
+<img src="https://user-images.githubusercontent.com/4015046/197858162-288142b7-33b0-4ede-beeb-f4dd929f89a4.JPG" width=50% height=50%><br/>
+<img src="https://user-images.githubusercontent.com/4015046/197878637-bc70aa7d-3a14-4c36-991e-b1316bc58690.JPG" width=50% height=50%>
 <h2>2022-10-23</h2>
 <ul>
 <li>reshapes maps and perspective: top down rpg</li>
