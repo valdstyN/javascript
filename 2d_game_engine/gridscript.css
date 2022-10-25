@@ -3,5 +3,13 @@
   padding:0;
 }
 body{
-  overflow: hidden;
+  overflow:hidden;
+  background:#222;
+  display:flex;
+  justify-content:center;
+  align-items: center;
+  height:100vh;
+}
+.grid-main{
+    outline: none;
 }
