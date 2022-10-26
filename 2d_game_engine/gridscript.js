@@ -3,22 +3,28 @@
 var gameLoop;
 var gameFPS = 33;
 var gameWidth = 1024; // screen.width;
-var gameHeight = 768; // screen.height - 48;
+var gameHeight = 768; // screen.height;
 var gameTileSize = 40; // can be dynamic  - will make the rendering bigger/smaller
-var gameCvs;
-var gameCtx;
+var gameCvs;		// canvas
+var gameCtx;		//  canvas' context
 var gameX = 0;
 var gameY = 0;
-var gameDebugMode = 1;
+var gameScreenMoving = false;
+var gameDebugMode = 1;		// display information in the top left corner
 var gameOriginX = 0; // unused
 var gameOriginY = 0; // unused
-var gameCharInput = true;
+var gameCharInput = true;			// if false, no move input is allowed (used for pause, dialogues, during cinematics...)
 var gameCharX = gameTileSize*5;		// dynamically updating gameTileSize will mess up the X coord
 var gameCharY = gameTileSize*5;		// dynamically updating gameTileSize will mess up the Y coord
+var gameCharXPreMove = 0;
+var gameCharYPreMove = 0;
+var gameCharMoveDir = 0;
+var gameCharTileFrameX = 1;
+var gameCharTileFrameY = 1;
 var gameCharTileSize = 77;	// based on the charmap (png)
 var gameCharTileX = 5;
 var gameCharTileY = 5;
-var gameCharDirection = 3; // 1 top 2 right 3 down 4 left
+var gameCharDirection = 3; // 1 top 2 right 3 down 4 left (which direction the character faces)
 var gameMoveSpeed = gameTileSize; // 10; if the value is different, the character will move freely, not within the map grid
 var gameMapWidth = 100; // tiles long				-- will depend on the map loaded (need to update initialization)
 var gameMapHeight = 200; // tiles deep			-- will depend on the map loaded (need to update initialization)
@@ -73,7 +79,7 @@ var passThroughTile = [
 // ************************* HARDCODED ************************************ sample map with a black border around it ***********************
 for(let y=1; y<gameMapHeight-2; y++){
 	for(let x=1; x<gameMapWidth-2; x++){
-		if(Math.random()>0.7){
+		if(Math.random()>0.8){
 			gameMap[y][x] = "&dirt01";
 		}else{
 			gameMap[y][x] = "&grass02";
@@ -134,20 +140,6 @@ function drawScreen(){
 				}
 			}
 
-			// DRAW CHARACTER (only once!)
-			if(gameCharTileY==y && gameCharTileX==x){
-				let dx = 0;
-				let dy = 0;
-				// probably can make this a function
-				switch(gameCharDirection){
-					case 1:	dx = 308; dy = 231; break;
-					case 2:	dx = 539; dy = 154; break;
-					case 3:	dx = 308; dy = 1; break;
-					case 4:	dx = 539; dy = 77; break;
-				}
-				gameCtx.drawImage(gameImage['&hero'], dx, dy, gameCharTileSize, gameCharTileSize, gameCharX, gameCharY,  gameTileSize, gameTileSize);
-			}
-
 			// DRAw LAYER 2
 			if(gameMapL2[y][x]!=""){
 				if(gameMapL2[y][x].substr(0,1)=="&"){
@@ -156,15 +148,71 @@ function drawScreen(){
 					gameCtx.drawImage(document.getElementById('tmap'), tileX, tileY, gameTilemapSize, gameTilemapSize, (x*gameTileSize)-gameX, (y*gameTileSize-gameY), gameTileSize, gameTileSize);
 				}
 			}
+
 		}
 	}
 
+	// we draw the character after both layers so we'll need to redraw any top layer hiding it afterwards
+		if(!gameCharInput && !gameScreenMoving){
+			if(gameCharMoveDir==4){
+				if(gameCharX<=(gameCharXPreMove-gameMoveSpeed)){
+					if(gameCharX<gameCharXPreMove-gameMoveSpeed){gameCharX=gameCharXPreMove-gameMoveSpeed}
+					gameCharInput = true;
+				}else{
+					gameCharX -= (gameFPS/gameMoveSpeed)*5;
+				}
+			}
+			if(gameCharMoveDir==2){
+				if(gameCharX>=(gameCharXPreMove+gameMoveSpeed)){
+					if(gameCharX>gameCharXPreMove+gameMoveSpeed){gameCharX=gameCharXPreMove+gameMoveSpeed}
+					gameCharInput = true;
+				}else{
+					gameCharX += (gameFPS/gameMoveSpeed)*5;
+				}
+			}
+			if(gameCharMoveDir==1){
+				if(gameCharY<=(gameCharYPreMove-gameMoveSpeed)){
+					if(gameCharY<gameCharYPreMove-gameMoveSpeed){gameCharY=gameCharYPreMove-gameMoveSpeed}
+					gameCharInput = true;
+				}else{
+					gameCharY -= (gameFPS/gameMoveSpeed)*5;
+				}
+			}
+			if(gameCharMoveDir==3){
+				if(gameCharY>=(gameCharYPreMove+gameMoveSpeed)){
+					if(gameCharY>gameCharYPreMove+gameMoveSpeed){gameCharY=gameCharYPreMove+gameMoveSpeed}
+					gameCharInput = true;
+				}else{
+					gameCharY += (gameFPS/gameMoveSpeed)*5;
+				}
+			}
+		}
+
+		// probably can make this a function
+		switch(gameCharDirection){
+			case 1:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 231; break;
+			case 2:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 154; break;
+			case 3:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 1; break;
+			case 4:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 77; break;
+		}
+		gameCtx.drawImage(gameImage['&hero'], gameCharTileFrameX, gameCharTileFrameY, gameCharTileSize, gameCharTileSize, gameCharX, gameCharY,  gameTileSize, gameTileSize);
+		// need to redraw the top layer - in order to avoid visual artifacts during movements, we update all cells around the character
+		for(var yo=gameCharTileY-1;yo<=gameCharTileY+1;yo++){
+		for(var xo=gameCharTileX-1;xo<=gameCharTileX+1;xo++){
+			if(gameMapL2[yo][xo].substr(0,1)=="&"){
+				var tileX = gameTilemap[gameMapL2[yo][xo]].split(";")[0];
+				var tileY = gameTilemap[gameMapL2[yo][xo]].split(";")[1];
+				gameCtx.drawImage(document.getElementById('tmap'), tileX, tileY, gameTilemapSize, gameTilemapSize, (xo*gameTileSize)-gameX, (yo*gameTileSize-gameY), gameTileSize, gameTileSize);
+			}
+		}
+		}
+
 	// simulate night time
 	if(new Date().getHours()>21 || new Date().getHours()<6){
-		gameCtx.globalAlpha = 0.2;
-	  gameCtx.fillStyle = "blue";
-	  gameCtx.fillRect(0,0,gameWidth,gameHeight);
-	  gameCtx.globalAlpha = 1.0;
+			gameCtx.globalAlpha = 0.2;
+			gameCtx.fillStyle = "blue";
+			gameCtx.fillRect(0,0,gameWidth,gameHeight);
+			gameCtx.globalAlpha = 1.0;
 	}
 
 	// DRAW REST
@@ -190,7 +238,7 @@ function createScreen(){
 	gameCtx.fillRect(0,0,gameWidth,gameHeight);
 	document.body.append(b);
 
-  	// need to externalize this in a separate function
+  // need to externalize this in separate function
 	var i = document.createElement("img");
 		i.src = "./res/tilemap.png";
 		i.style.display = "none";
@@ -205,17 +253,17 @@ function createScreen(){
 
 function keyPressed(e){
 	switch(e.keyCode){
-	    case 38:move('up');break;
-	    case 40:move('down');break;
-	    case 37:move('left');break;
-	    case 39:move('right');break;
-	    case 32:keyBind('action');break;
-	    case 121:
+			case 38:move('up');break;
+			case 40:move('down');break;
+			case 37:move('left');break;
+			case 39:move('right');break;
+			case 32:keyBind('action');break;
+			case 121:
 				e.preventDefault();
 				e.stopPropagation();
 				gameDebugMode=3-gameDebugMode;
-				break;
-	    case 122:toggleFullscreen();break;
+			break;
+			case 122:toggleFullscreen();break;
 	}
 }
 
@@ -232,66 +280,97 @@ function printMessage(msg){
 
 }
 
-function walkingDelay(){
-	//gameCharInput = false;
-	//	var b = setInterval(function(){
-	//	gameCharX += 40/160;
-	//	},160/40);
-	//var a = setTimeout(function(){
-	//gameCharInput = true;
-	//	clearInterval(b); // does not always trigger at the same time
-	//},160);
+function moveAnim(d){
+	gameCharXPreMove = gameCharX;
+	gameCharYPreMove = gameCharY;
+	gameCharInput = false;
+	gameCharMoveDir = d;
 }
 
 function move(d){
+
+	// movement is only possible if we are not already walking (gameCharInput=false)
+	// note: we will not allow to change directing, else move values are messed up
+
 	// PRESS LEFT KEY
-	if(d=='left' && gameCharInput){
+	if(d=='left' && gameCharInput && !gameScreenMoving){
 		gameCharDirection = 4;
 		if(collideWith(gameCharTileX-1,gameCharTileY)==0){
 			if(gameCharX<gameTileSize*2 && gameX > 0){
-				gameX -= gameMoveSpeed;	// this moves the viewport
-				gameCharTileX -= 1;
+				// not clean
+					gameScreenMoving = true;
+					gameCharInput = false;
+					var scrmv = setTimeout(function(){
+						gameX -= gameMoveSpeed;	// this moves the viewport
+						gameCharTileX -= 1;
+						gameScreenMoving = false;
+						gameCharInput = true;
+					},300);
 			}else{
-				gameCharX -= gameMoveSpeed;
+			 //	gameCharX -= gameMoveSpeed;
+			 	moveAnim(4);
 				gameCharTileX -= 1;
 			}
 		}
 	}
 	// PRESS RIGHT KEY
-	if(d=='right' && gameCharInput){
+	if(d=='right' && gameCharInput && !gameScreenMoving){
 		gameCharDirection = 2;
 		if(collideWith(gameCharTileX+1,gameCharTileY)==0){
 			if(gameCharX>gameWidth-(gameTileSize*3) && (Math.floor(gameX/gameTileSize)+Math.floor(gameWidth/gameTileSize)+2)<=gameMapWidth){
-				gameX += gameMoveSpeed;	// this moves the viewport
-				gameCharTileX += 1;
+				gameScreenMoving = true;
+				gameCharInput = false;
+				var scrmv = setTimeout(function(){
+					gameX += gameMoveSpeed;	// this moves the viewport
+					gameCharTileX += 1;
+					gameScreenMoving = false;
+					gameCharInput = true;
+				},300);
 			}else{
-				gameCharX += gameMoveSpeed;
+				// gameCharX += gameMoveSpeed;
+				moveAnim(2);
 				gameCharTileX += 1;
 			}
 		}
 	}
 	// PRESS UP KEY
-	if(d=='up' && gameCharInput){
+	if(d=='up' && gameCharInput && !gameScreenMoving){
 		gameCharDirection = 1;
 	 	if(collideWith(gameCharTileX,gameCharTileY-1)==0){
 			if(gameCharY<gameTileSize*2 && gameY > 0){
-				gameY -= gameMoveSpeed;	// this moves the viewport
-				gameCharTileY -= 1;
+				// not clean
+					gameScreenMoving = true;
+					gameCharInput = false;
+					var scrmv = setTimeout(function(){
+						gameY -= gameMoveSpeed;	// this moves the viewport
+						gameCharTileY -= 1;
+						gameScreenMoving = false;
+						gameCharInput = true;
+					},300);
 			}else{
-				gameCharY -= gameMoveSpeed;
+				// gameCharY -= gameMoveSpeed;
+				moveAnim(1);
 				gameCharTileY -= 1;
 			}
 		}
 	}
 	// PRESS DOWN KEY
-	if(d=='down' && gameCharInput){
+	if(d=='down' && gameCharInput && !gameScreenMoving){
 		gameCharDirection = 3;
 		if(collideWith(gameCharTileX,gameCharTileY+1)==0){
 			if(gameCharY>gameHeight-(gameTileSize*3) && (Math.floor(gameY/gameTileSize)+Math.floor(gameHeight/gameTileSize)+2)<=gameMapHeight){
-				gameY += gameMoveSpeed;	// this moves the viewport
-				gameCharTileY += 1;
+				// not clean
+					gameScreenMoving = true;
+					gameCharInput = false;
+					var scrmv = setTimeout(function(){
+						gameY += gameMoveSpeed;	// this moves the viewport
+						gameCharTileY += 1;
+						gameScreenMoving = false;
+						gameCharInput = true;
+					},300);
 			}else{
-				gameCharY += gameMoveSpeed;
+				//	gameCharY += gameMoveSpeed;
+				moveAnim(3);
 				gameCharTileY += 1;
 			}
 		}
