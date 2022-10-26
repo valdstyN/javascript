@@ -1,6 +1,6 @@
 <h2>2022-10-26</h2>
 <ul>
-<li>Added smooth walk movement with animation. Moving beyond the initial screen scope is however too rough. The issue is that within the screen, the character can move pixel by pixe (animation), howevers map tiles are drawn by units (gameTileSize). </li>
+<li>Added smooth walk movement with animation. Moving beyond the initial screen scope is however too rough. The issue is that within the screen, the character can move pixel by pixe (animation), however map tiles are drawn by units (gameTileSize). </li>
 </ul>
 <img src="https://user-images.githubusercontent.com/4015046/198011269-7c68a346-a674-4402-8a59-69ce15c91c07.gif" width=50% height=50%>
 <h2>2022-10-25</h2>
