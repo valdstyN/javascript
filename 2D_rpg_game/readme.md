@@ -1,5 +1,12 @@
 <h2>2022-10-26</h2>
 <ul>
+<li>Now possible to display messages. This will freeze the character movement. Up to 3 lines will be displayed, else the user has to press the action key (Space bar)./li>
+<li>Wrote a function to return which mapL2 item (texture) the character is currently facing.</li>
+<li>Added functions to load, play and stop sounds/music. Added a background music (currently doesn't play automatically)</li>
+</ul>
+<img src="https://user-images.githubusercontent.com/4015046/198344778-3fdc5f17-78e8-4967-8362-eeffd2408297.gif" width=50% height=50%>
+<h2>2022-10-26</h2>
+<ul>
 <li>Added smooth walk movement with animation. Moving beyond the initial screen scope is however too rough. The issue is that within the screen, the character can move pixel by pixe (animation), however map tiles are drawn by units (gameTileSize). </li>
 </ul>
 <img src="https://user-images.githubusercontent.com/4015046/198011269-7c68a346-a674-4402-8a59-69ce15c91c07.gif" width=50% height=50%>
