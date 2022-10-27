@@ -75,10 +75,10 @@ var passThroughTile = [
 	'&grass01',
 	'&grass02',
 	'&grass03',
-  '&dirt01',
+  	'&dirt01',
 	'&path01','&path02','&path03','&path04',
-	'&roof03','&roof04',		// allow to pass behind
-	'&door02'								// allow to stand in the entrance
+	'&roof03','&roof04',	// allow to pass behind
+	'&door02'		// allow to stand in the entrance
 ]
 
 // ************************* HARDCODED ************************************ sample map with a black border around it ***********************
@@ -271,11 +271,11 @@ function drawScreen(){
 		gameCtx.fillText(gamePrintMessage[0], 20, gameHeight-160);
 		if(gamePrintMessage.length>1){gameCtx.fillText(gamePrintMessage[1], 20, gameHeight-120);}
 		if(gamePrintMessage.length>2){gameCtx.fillText(gamePrintMessage[2], 20, gameHeight-80);}
-    gameCtx.beginPath();
-    gameCtx.moveTo((gameWidth/2)-10, gameHeight-40);
-    gameCtx.lineTo(gameWidth/2, gameHeight-30);
-    gameCtx.lineTo((gameWidth/2)+10, gameHeight-40);
-    gameCtx.fill();
+		gameCtx.beginPath();
+		gameCtx.moveTo((gameWidth/2)-10, gameHeight-40);
+		gameCtx.lineTo(gameWidth/2, gameHeight-30);
+		gameCtx.lineTo((gameWidth/2)+10, gameHeight-40);
+		gameCtx.fill();
 		gameCtx.globalAlpha = 1.0;
 	}
 
@@ -364,10 +364,10 @@ function keyBind(k){
 
 function facedItem(){
 	var item = "";
-	if(gameCharDirection==1){		item = gameMapL2[gameCharTileY-1][gameCharTileX];	}
-	if(gameCharDirection==2){		item = gameMapL2[gameCharTileY][gameCharTileX+1];	}
-	if(gameCharDirection==3){		item = gameMapL2[gameCharTileY+1][gameCharTileX];	}
-	if(gameCharDirection==4){		item = gameMapL2[gameCharTileY][gameCharTileX-1];	}
+	if(gameCharDirection==1){item = gameMapL2[gameCharTileY-1][gameCharTileX];}
+	if(gameCharDirection==2){item = gameMapL2[gameCharTileY][gameCharTileX+1];}
+	if(gameCharDirection==3){item = gameMapL2[gameCharTileY+1][gameCharTileX];}
+	if(gameCharDirection==4){item = gameMapL2[gameCharTileY][gameCharTileX-1];}
 	return item;	// return the texture of the item currently faced
 }
 
