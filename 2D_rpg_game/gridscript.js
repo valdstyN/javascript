@@ -9,6 +9,8 @@ var gameCvs;		// canvas
 var gameCtx;		//  canvas' context
 var gameX = 0;
 var gameY = 0;
+var gameGUIState = 0;
+var gamePrintMessage = [];
 var gameScreenMoving = false;
 var gameDebugMode = 1;		// display information in the top left corner
 var gameOriginX = 0; // unused
@@ -22,8 +24,8 @@ var gameCharMoveDir = 0;
 var gameCharTileFrameX = 1;
 var gameCharTileFrameY = 1;
 var gameCharTileSize = 77;	// based on the charmap (png)
-var gameCharTileX = 5;
-var gameCharTileY = 5;
+var gameCharTileX = 10;
+var gameCharTileY = 8;
 var gameCharDirection = 3; // 1 top 2 right 3 down 4 left (which direction the character faces)
 var gameMoveSpeed = gameTileSize; // 10; if the value is different, the character will move freely, not within the map grid
 var gameMapWidth = 100; // tiles long				-- will depend on the map loaded (need to update initialization)
@@ -36,7 +38,7 @@ var gameTilemap = [];	// see README.MD for credits (test tilemap)
 	gameTilemap['&grass01'] = '640;0';
 	gameTilemap['&grass02'] = '384;0';
 	gameTilemap['&grass03'] = '416;0';
-	gameTilemap['&dirt01'] = '0;576';
+	gameTilemap['&dirt01'] = '1;576';
 	gameTilemap['&path01'] = '480;928';
 	gameTilemap['&path02'] = '512;928';
 	gameTilemap['&path03'] = '544;928';
@@ -54,6 +56,9 @@ var gameTilemap = [];	// see README.MD for credits (test tilemap)
 	gameTilemap['&roof03'] = '800;608'; // roof top left
 	gameTilemap['&roof04'] = '832;608'; // roof	top right
 	gameTilemap['&roof05'] = '768;608'; // plain roof
+	gameTilemap['&hill01'] = '448;0'; // hill
+	gameTilemap['&hill02'] = '480;0'; // hill+grass
+	gameTilemap['&flower01'] = '448;96'; // hill+grass
 
 // initialize full map array (blank)
 for(let y=0; y<gameMapHeight; y++){
@@ -99,6 +104,20 @@ for(var p=1;p<11;p++){
 }
 gameMap[8][11] = "&path04";
 gameMap[8][12] = "&grass02";
+
+// add some hills
+for(var p=0;p<30;p++){
+	gameMap[0][p] = "&hill01";
+	gameMap[p][0] = "&hill01";
+	gameMap[p][31] = ""; // let's limit the map for now
+	gameMap[30][p] = "&hill01"; // let's limit the map for now
+	gameMap[p][30] = "&hill01"; // let's limit the map for now
+}
+gameMap[30][30] = "&hill01";
+gameMap[30][31] = ""; // let's limit the map for now
+
+// add a special flower
+gameMapL2[11][7] = "&flower01";
 // ****************************************************************************************************************************************
 
 function StartGame(){
@@ -106,6 +125,7 @@ function StartGame(){
 	startGameLoop();
 	changeFramerate(60);
 	changeTileSize(48);
+	loadSound("bgmusic","./res/music.mp3");
 }
 
 function loadImage(imageName,imageURL){
@@ -116,6 +136,26 @@ function loadImage(imageName,imageURL){
 	document.body.append(i);
 	gameImage.push(i.id);
 	gameImage['&'+i.id] = i;
+}
+
+function playSound(soundName){
+	document.getElementById(soundName).play();
+}
+function stopSound(soundName){
+	document.getElementById(soundName).pause();
+}
+
+function loadSound(soundName,soundURL){
+	var i = document.createElement("audio");
+	i.style.display = 'none';
+	i.id = soundName;
+	i.controls="";
+	i.loop = true;
+	var j = document.createElement("source");
+	j.src = soundURL;
+	j.type = "audio/mp3";
+	i.append(j);
+	document.body.append(i);
 }
 
 function ifbi(n,z){
@@ -187,14 +227,19 @@ function drawScreen(){
 				}
 			}
 		}
+		// hax - reset gameCharInput to false in case we are in a GUI
+		if(gameGUIState!=0){gameCharInput=false}
 
 		// probably can make this a function
-		switch(gameCharDirection){
-			case 1:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 231; break;
-			case 2:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 154; break;
-			case 3:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 1; break;
-			case 4:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+77); gameCharTileFrameY = 77; break;
+		if(gameGUIState==0){
+			switch(gameCharDirection){
+				case 1:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+gameCharTileSize); gameCharTileFrameY = 231; break;
+				case 2:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+gameCharTileSize); gameCharTileFrameY = 154; break;
+				case 3:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+gameCharTileSize); gameCharTileFrameY = 1; break;
+				case 4:	gameCharTileFrameX = gameCharInput?308:(gameCharTileFrameX>=539?1:gameCharTileFrameX+gameCharTileSize); gameCharTileFrameY = 77; break;
+			}
 		}
+
 		gameCtx.drawImage(gameImage['&hero'], gameCharTileFrameX, gameCharTileFrameY, gameCharTileSize, gameCharTileSize, gameCharX, gameCharY,  gameTileSize, gameTileSize);
 		// need to redraw the top layer - in order to avoid visual artifacts during movements, we update all cells around the character
 		for(var yo=gameCharTileY-1;yo<=gameCharTileY+1;yo++){
@@ -213,6 +258,25 @@ function drawScreen(){
 			gameCtx.fillStyle = "blue";
 			gameCtx.fillRect(0,0,gameWidth,gameHeight);
 			gameCtx.globalAlpha = 1.0;
+	}
+
+	// draw GUI on top of it all
+	// if we have a message to write
+	if(gameGUIState==1){
+		gameCtx.globalAlpha = 0.8;
+		gameCtx.fillStyle = "black";
+		gameCtx.fillRect(0,gameHeight-200,gameWidth, gameHeight);
+		gameCtx.font = "20px Courier New";
+		gameCtx.fillStyle = "#FFFF80";
+		gameCtx.fillText(gamePrintMessage[0], 20, gameHeight-160);
+		if(gamePrintMessage.length>1){gameCtx.fillText(gamePrintMessage[1], 20, gameHeight-120);}
+		if(gamePrintMessage.length>2){gameCtx.fillText(gamePrintMessage[2], 20, gameHeight-80);}
+    gameCtx.beginPath();
+    gameCtx.moveTo((gameWidth/2)-10, gameHeight-40);
+    gameCtx.lineTo(gameWidth/2, gameHeight-30);
+    gameCtx.lineTo((gameWidth/2)+10, gameHeight-40);
+    gameCtx.fill();
+		gameCtx.globalAlpha = 1.0;
 	}
 
 	// DRAW REST
@@ -267,16 +331,59 @@ function keyPressed(e){
 	}
 }
 
-function keyBind(e){
-	if(e=='action'){
+function keyBind(k){
+	if(k=='action'){
+
 		// for example - character facing up and seeing a wall in top layer
-		if(gameCharDirection==1 && gameMapL2[gameCharTileY-1][gameCharTileX]=="&wall13"){
-			alert("this is a wall");
+		if(gameGUIState==0 && gameCharInput==true){
+
+			// need a better way to handle interaction
+			if(facedItem()=="&wall13"){
+				printMessage("[You] This is a wall.");
+				return  1;
+			}
+			if(facedItem()=="&flower01"){
+				printMessage("[You] This is a pretty flower.");
+				return  1;
+			}
+
 		}
+
+		// if we are reading a message
+		if(gameCharInput==false && gameGUIState==1 && gamePrintMessage.length>0){
+				gamePrintMessage.splice(0,3);
+				if(gamePrintMessage.length==0){
+					gameGUIState = 0;
+					gameCharInput = true;
+				}
+				return 1;
+		}
+
 	}
 }
 
+function facedItem(){
+	var item = "";
+	if(gameCharDirection==1){		item = gameMapL2[gameCharTileY-1][gameCharTileX];	}
+	if(gameCharDirection==2){		item = gameMapL2[gameCharTileY][gameCharTileX+1];	}
+	if(gameCharDirection==3){		item = gameMapL2[gameCharTileY+1][gameCharTileX];	}
+	if(gameCharDirection==4){		item = gameMapL2[gameCharTileY][gameCharTileX-1];	}
+	return item;	// return the texture of the item currently faced
+}
+
+// suggestion
+// guiState = 0 (nothing); 1=msg, 2=options, 3=inventory, 4=battle...
 function printMessage(msg){
+ gameCharInput = false;
+ gameGUIState = 1;
+
+ // compute how many characters we can fit on one line
+ // ISSUE : we should not split words
+ gameCtx.font = "20px Courier New"; // 12 ...constant since we set 20px??
+ let maxCharLen = (gameWidth-40)/12;
+ for(var w=0;w<msg.length;w+=maxCharLen){
+	 gamePrintMessage.push(msg.substring(w,w+maxCharLen));
+ }
 
 }
 
@@ -410,6 +517,10 @@ function drawDebug(){
 		gameCtx.fillText("gameFPS:"+Math.floor((1/gameFPS*1000)), 10, 80);
 		gameCtx.fillText("gameCharX,gameCharY:"+gameCharX+","+gameCharY, 10, 100);
 		gameCtx.fillText("gameCharTileX,gameCharTileY:"+gameCharTileX+","+gameCharTileY, 10, 120);
+		gameCtx.fillText("gameGUIState:"+gameGUIState, 10, 140);
+		gameCtx.fillText("gameCharInput:"+gameCharInput, 10, 160);
+		gameCtx.fillText("gamePrintMessage:"+gamePrintMessage, 10, 180);
+
 	}
 }
 
@@ -460,14 +571,10 @@ function stopGameLoop(){
 
 function setTheme(idTheme){
 }
+
 function inputMessage(msg, arrayOptions){
 	return reply;
 }
+
 function showMessage(msg){
-}
-function playSound(domAudio){
-}
-function playMusic(domMusic){
-}
-function stopMusic(){
 }
