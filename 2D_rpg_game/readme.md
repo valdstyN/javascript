@@ -1,6 +1,6 @@
 <h2>2022-10-28</h2>
 <ul>
-<li>Created a add-on tool to help retrieve tilemap coordinatees (see tilemap.html)</li>
+<li>Created a add-on tool to help retrieve tilemap coordinates (see tilemap.html)</li>
 <li>Added some random wood logs on the map</li>
 </ul>
 <h2>2022-10-27</h2>
