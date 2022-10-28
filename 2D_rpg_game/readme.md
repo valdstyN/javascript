@@ -1,4 +1,9 @@
-<h2>2022-10-26</h2>
+<h2>2022-10-28</h2>
+<ul>
+<li>Created a add-on tool to help retrieve tilemap coordinatees (see tilemap.html)/li>
+<li>Added some random wood logs on the map</li>
+</ul>
+<h2>2022-10-27</h2>
 <ul>
 <li>Now possible to display messages. This will freeze the character movement. Up to 3 lines will be displayed, else the user has to press the action key (Space bar)./li>
 <li>Wrote a function to return which mapL2 item (texture) the character is currently facing.</li>
