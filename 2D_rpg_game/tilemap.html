@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript">
+      function loadMap(){
+          var tsz = parseInt(document.getElementById("ts").value);
+          var clr = document.getElementById("coord").value;
+          var gclr = document.getElementById("gridclr").value;
+            document.getElementById("img-map").src =  document.getElementById("tilemap").value;
+             document.getElementById("tilemap-cvs").width = document.getElementById("img-map").width;
+             var cvs = document.getElementById("tilemap-cvs");
+           	var ctx = cvs.getContext('2d');
+            ctx.drawImage(document.getElementById("img-map"),0,0);
+            ctx.strokeStyle = "white";
+            ctx.fillStyle = clr;
+            ctx.lineWidth = 1;
+            for(var x=0;x<cvs.width;x+=tsz){
+              for(var y=0;y<cvs.height;y+=tsz){
+                if(gclr!=""){
+                  ctx.moveTo(x,y);
+                  ctx.lineTo(x+tsz,y);
+                  ctx.stroke();
+                  ctx.moveTo(x,y);
+                  ctx.lineTo(x,y+tsz);
+                  ctx.stroke();
+              }
+                // write the x and y
+                if(clr!=""){
+                  ctx.font = "10px Courier New";
+                  ctx.fillText(x, x+5, y+15);
+                  ctx.fillText(y, x+5, y+25);
+                }
+              }
+            }
+        }
+
+        function addTile(e, elm){
+            var tsz = parseInt(document.getElementById("ts").value);
+           let mx = e.clientX; let my = e.clientY;
+           let cvsX = elm.getBoundingClientRect().left; let cvsY = elm.getBoundingClientRect().top;
+           document.getElementById("arr").innerHTML += "gameTilemap['&xxx'] = '"+(Math.floor((mx-cvsX)/32)*tsz)+";"+(Math.floor((my-cvsY)/32)*tsz)+"';\r\n";
+         }
+
+    </script>
+    <style media="screen">
+      canvas{
+        border:1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <input type=text id="tilemap" name="" value="./res/tilemap.png">
+    <input type="button" name="" value="Load..." onclick="loadMap()">
+    Tile size (px): <input id="ts" type="text" name="" value="32" >
+    Grid color: <input type=text id="gridclr" name="" value="white">
+    Coord color: <input type=text id="coord" name="" value="black">
+    <img src="" id="img-map" style="display:none">
+    <br>
+    <div class="grid-main" tabindex="1"  style="float:left;">
+      <canvas id="tilemap-cvs" width="1024" height="768" onclick="addTile(event, this)"></canvas>
+    </div>
+    <div class="" style="float:right">
+      <textarea id="arr" name="name" rows="50" cols="50"></textarea>
+    </div>
+  </body>
+</html>
