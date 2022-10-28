@@ -59,6 +59,8 @@ var gameTilemap = [];	// see README.MD for credits (test tilemap)
 	gameTilemap['&hill01'] = '448;0'; // hill
 	gameTilemap['&hill02'] = '480;0'; // hill+grass
 	gameTilemap['&flower01'] = '448;96'; // hill+grass
+	gameTilemap['&dirt10'] = '544;544';
+	gameTilemap['&dirt11'] = '512;544';
 
 // initialize full map array (blank)
 for(let y=0; y<gameMapHeight; y++){
@@ -75,20 +77,20 @@ var passThroughTile = [
 	'&grass01',
 	'&grass02',
 	'&grass03',
-  	'&dirt01',
+  '&dirt01',
 	'&path01','&path02','&path03','&path04',
-	'&roof03','&roof04',	// allow to pass behind
-	'&door02'		// allow to stand in the entrance
+	'&roof03','&roof04',		// allow to pass behind
+	'&door02'								// allow to stand in the entrance
+
 ]
 
 // ************************* HARDCODED ************************************ sample map with a black border around it ***********************
 for(let y=1; y<gameMapHeight-2; y++){
 	for(let x=1; x<gameMapWidth-2; x++){
-		if(Math.random()>0.8){
-			gameMap[y][x] = "&dirt01";
-		}else{
-			gameMap[y][x] = "&grass02";
+		if(Math.random()>0.99){
+			gameMapL2[y][x] = "&dirt11";	// drop some wood logs on the floor
 		}
+		gameMap[y][x] = "&grass02";
 	}
 }
 // add a house - note how door2 (entrance) is drawn on layer 1
@@ -271,11 +273,11 @@ function drawScreen(){
 		gameCtx.fillText(gamePrintMessage[0], 20, gameHeight-160);
 		if(gamePrintMessage.length>1){gameCtx.fillText(gamePrintMessage[1], 20, gameHeight-120);}
 		if(gamePrintMessage.length>2){gameCtx.fillText(gamePrintMessage[2], 20, gameHeight-80);}
-		gameCtx.beginPath();
-		gameCtx.moveTo((gameWidth/2)-10, gameHeight-40);
-		gameCtx.lineTo(gameWidth/2, gameHeight-30);
-		gameCtx.lineTo((gameWidth/2)+10, gameHeight-40);
-		gameCtx.fill();
+    gameCtx.beginPath();
+    gameCtx.moveTo((gameWidth/2)-10, gameHeight-40);
+    gameCtx.lineTo(gameWidth/2, gameHeight-30);
+    gameCtx.lineTo((gameWidth/2)+10, gameHeight-40);
+    gameCtx.fill();
 		gameCtx.globalAlpha = 1.0;
 	}
 
@@ -336,15 +338,11 @@ function keyBind(k){
 
 		// for example - character facing up and seeing a wall in top layer
 		if(gameGUIState==0 && gameCharInput==true){
-
 			// need a better way to handle interaction
-			if(facedItem()=="&wall13"){
-				printMessage("[You] This is a wall.");
-				return  1;
-			}
-			if(facedItem()=="&flower01"){
-				printMessage("[You] This is a pretty flower.");
-				return  1;
+			switch(facedItem()){
+				case "&wall13": 	printMessage("[You] This is a wall.");return 1; break;
+				case "&flower01": printMessage("[You] This is a pretty flower.");return 1; break;
+				case "&dirt11": printMessage("[You] That log is heavy.");return 1; break;					
 			}
 
 		}
@@ -364,10 +362,10 @@ function keyBind(k){
 
 function facedItem(){
 	var item = "";
-	if(gameCharDirection==1){item = gameMapL2[gameCharTileY-1][gameCharTileX];}
-	if(gameCharDirection==2){item = gameMapL2[gameCharTileY][gameCharTileX+1];}
-	if(gameCharDirection==3){item = gameMapL2[gameCharTileY+1][gameCharTileX];}
-	if(gameCharDirection==4){item = gameMapL2[gameCharTileY][gameCharTileX-1];}
+	if(gameCharDirection==1){		item = gameMapL2[gameCharTileY-1][gameCharTileX];	}
+	if(gameCharDirection==2){		item = gameMapL2[gameCharTileY][gameCharTileX+1];	}
+	if(gameCharDirection==3){		item = gameMapL2[gameCharTileY+1][gameCharTileX];	}
+	if(gameCharDirection==4){		item = gameMapL2[gameCharTileY][gameCharTileX-1];	}
 	return item;	// return the texture of the item currently faced
 }
 
@@ -571,10 +569,8 @@ function stopGameLoop(){
 
 function setTheme(idTheme){
 }
-
 function inputMessage(msg, arrayOptions){
 	return reply;
 }
-
 function showMessage(msg){
 }
