@@ -5,7 +5,7 @@
 </ul>
 <h2>2022-10-27</h2>
 <ul>
-<li>Now possible to display messages. This will freeze the character movement. Up to 3 lines will be displayed, else the user has to press the action key (Space bar)./li>
+<li>Now possible to display messages. This will freeze the character movement. Up to 3 lines will be displayed, else the user has to press the action key (Space bar).</li>
 <li>Wrote a function to return which mapL2 item (texture) the character is currently facing.</li>
 <li>Added functions to load, play and stop sounds/music.</li>
 <li>Added a background music (currently doesn't play automatically)</li>
