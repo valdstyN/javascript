@@ -3,4 +3,6 @@
 -Now handle 360 rays</br>
 -Vertices are now used to "stop" the rays projected onto the walls</br>
 
-![pic1](https://user-images.githubusercontent.com/4015046/198852543-0aef5376-6294-4ebe-8495-79cbc853f88f.png)
+![2](https://user-images.githubusercontent.com/4015046/198852853-2e7690a1-2d81-4292-bb6f-414f9e9bc839.png)
+
+![3](https://user-images.githubusercontent.com/4015046/198852854-46edecee-6669-410d-9860-57676219bdcc.png)
