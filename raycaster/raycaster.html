@@ -55,9 +55,9 @@
         event = event || window.event;
         let r = c.width;
         let h = 0;
-        let k = 100;
+        let k = c.height/2;
         rays = [];
-        for (let i = 0; i < 60; i++){
+        for (let i = 0; i < 120; i++){
           let dx = r * Math.cos(i) - h;
           let dy = r * Math.sin(i) + k;
           rays.push(createSegment(event.pageX-10,event.pageY-10, dx + k, dy - h));
