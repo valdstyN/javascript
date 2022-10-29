@@ -65,9 +65,10 @@
         ctx.clearRect(0,0,c.width,c.height);
         for(f in rays){
           for(w in walls){
-            if(vertex(rays[f], walls[w])){
-              rays[f][2] = vertex[0];
-              rays[f][3] = vertex[1];
+            let v = vertex(rays[f], walls[w]);
+            if(v){
+              rays[f][2] = v[0];
+              rays[f][3] = v[1];
             }
            }
          }
@@ -84,7 +85,7 @@
     </style>
   </head>
   <body>
-    <canvas id="canvas" width="300" height="300"></canvas>
+    <canvas id="canvas" width="500" height="500"></canvas>
     <script type="text/javascript">
       var c = document.getElementById('canvas');
       var ctx = c.getContext('2d');
