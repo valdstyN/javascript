@@ -1,4 +1,6 @@
 <b>2022-10-30</b></br>
+-Added a player that can move up and down.</br>
+-Rays are only projected for a limited viewscope.</br>
 -Progressed on the "3D" rendering. Side-by-side viewports now implemented.</br>
 -Issue to be fixed: fish-eye effect. Also distances seem a bit off.
 -To be added: the camera can move forwards/backwards but only the viewport turns (the camera stays on the same Y-axis).
