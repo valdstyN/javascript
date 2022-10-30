@@ -83,7 +83,7 @@
         let k = c.height/2;
         let dist = 0;
         rays = [];
-        for (let i = d2r(playerA-(fov/2)); i <= d2r(playerA+(fov/2)); i+=0.01){
+        for (let i = d2r(playerA-(fov/2)); i <= d2r(playerA+(fov/2)); i+=0.001){  // now casting 1000+ rays
 //        for (let i = playerA-(Math.PI/5); i < playerA+(Math.PI/5); i+=0.01){
           let dx = r*Math.cos(i)-h;
           let dy = r*Math.sin(i)+k;
@@ -92,22 +92,26 @@
         vertices = [];
         // draw sky
         ctx3D.fillStyle = "blue";
-        ctx3D.fillRect(0,0,c3D.width,c3D.height/2);
+        //ctx3D.fillRect(0,0,c3D.width,c3D.height/2);  --plain colour
+        ctx3D.drawImage(sky,0,0,640,320);
+
         // draw ground
         ctx3D.fillStyle = "green";
-        ctx3D.fillRect(0,c3D.height/2,c3D.width,c3D.height);
+        //ctx3D.fillRect(0,c3D.height/2,c3D.width,c3D.height); --plain colour
+        ctx3D.drawImage(grass,0,240,640,240);
 
-        for(f in rays){
-          vertices[f]=0;
-          for(w in walls){
+        for(w in walls){
+          let txtwall = 0;
+          for(f in rays){
+            vertices[f]=0;
             let v = vertex(rays[f], walls[w]);
             if(v){
               rays[f][2] = v[0];
               rays[f][3] = v[1];
               dist = distance([playerX,playerY],[v[0],v[1]]);
-              //dist = c3D.height - dist;
-                let z = dist * Math.cos(d2r(fov));
-                dist = c3D.height * 30 / z; //dist;
+              //dist = c3D.height - dist;    original method to calculate height (before fish-eye correction)
+              let z = dist * Math.cos(d2r(fov));
+              dist = c3D.height * 30 / z; //dist;
 
               if(dist>vertices[f]){
                   vertices[f]=dist;
@@ -118,7 +122,16 @@
                   gc=gc<0?0:gc;
                   bc=bc<0?0:bc;
                   ctx3D.fillStyle = "#" + ("0"+rc.toString(16)).substr(-2) + ("0"+gc.toString(16)).substr(-2) + ("0"+bc.toString(16)).substr(-2);
-                  ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2),(fov/10)+1,dist);
+                  // ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
+                  // uncomment above and remove all lines below to render with a basic colour
+                  ctx3D.globalAlpha = 1;
+                  ctx3D.drawImage(wall, txtwall,5, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
+                  txtwall++;
+                  if(txtwall>750)txtwall=0;
+                  ctx3D.globalAlpha = 0.5;
+                  // we still add a coloured layer but with transparency - this creates a kind of shadow
+                  ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
+                  ctx3D.globalAlpha = 1;
               }
             }
            }
@@ -152,17 +165,27 @@
       }
 
       function keyPressed(e){
-        switch(e.keyCode){
-          case 38:movePlayer(-0.1);break;
-    			case 40:movePlayer(+0.1);break;
-          case 37:turnPlayer(-2);break;
-          case 39:turnPlayer(+2);break;
-          // wasd
-          case 90:playerY--;break;
-          case 83:playerY++;break;
-          case 81:playerX--;break;
-          case 68:playerX++;break;
-        }
+          switch(e.keyCode){
+            case 38:movePlayer(-0.1);break;
+      			case 40:movePlayer(+0.1);break;
+      			case 37:turnPlayer(-2);break;
+      			case 39:turnPlayer(+2);break;
+            // wasd
+            case 90:playerY--;break;
+            case 83:playerY++;break;
+            case 81:playerX--;break;
+            case 68:playerX++;break;
+            // toggle 2D view
+            case 121:
+      				e.preventDefault();
+      				e.stopPropagation();
+              if(c.style.display!="none"){
+                c.style.display="none";
+              }else{
+                c.style.display="";
+              }
+      			break;
+          }
       }
 
     </script>
@@ -198,6 +221,21 @@
       createBlock(50,50,50,50);
       createBlock(300,250,200,50);
       createBlock(0,250,200,50);
+      // some pillars
+      createBlock(175,400,25,25);
+      createBlock(300,400,25,25);
+      createBlock(175,350,25,25);
+      createBlock(300,350,25,25);
+      createBlock(175,450,25,25);
+      createBlock(300,450,25,25);
+
+      var sky = new Image();
+      sky.src='./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg'; // name for source reference
+      var grass = new Image();
+      grass.src='./grass.png';
+      var wall = new Image();
+      wall.src='./wall.jpg';
+
       setInterval(drawScreen, 1000/fps);
       m.addEventListener("keydown", keyPressed, false);
       m.focus();
