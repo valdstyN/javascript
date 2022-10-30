@@ -1,3 +1,11 @@
+<b>2022-10-30 #4</b></br>
+-Increased the number of rays (1048). This makes the resolution much higher.</br>
+-Textured the sky/ground + walls. Wall textures have to be entirely seamless in X-axis (else they appear to "slide")</br>
+-Inverted the rays/walls loops when rendering.</br>
+-Movement still needs to be fixed. Also need to add collisions.</br>
+
+![textured1](https://user-images.githubusercontent.com/4015046/198899634-1a09333a-8417-4817-8020-aa9c4a207b02.png)
+
 <b>2022-10-30 #3</b></br>
 -Attempt to correct fish-eye effect (not perfect yet)</br>
 -Externalized the FOV as a variable</br>
