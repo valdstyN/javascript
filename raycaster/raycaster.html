@@ -155,8 +155,8 @@
         switch(e.keyCode){
           case 38:movePlayer(-0.1);break;
     			case 40:movePlayer(+0.1);break;
-    			case 37:turnPlayer(-2);break;
-    			case 39:turnPlayer(+2);break;
+          case 37:turnPlayer(-2);break;
+          case 39:turnPlayer(+2);break;
           // wasd
           case 90:playerY--;break;
           case 83:playerY++;break;
@@ -198,7 +198,6 @@
       createBlock(50,50,50,50);
       createBlock(300,250,200,50);
       createBlock(0,250,200,50);
-
       setInterval(drawScreen, 1000/fps);
       m.addEventListener("keydown", keyPressed, false);
       m.focus();
