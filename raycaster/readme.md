@@ -7,6 +7,8 @@
 
 ![fez1](https://user-images.githubusercontent.com/4015046/198890071-919a645a-7ccc-43e3-b939-33ea614f5e05.png)
 
+![fez2](https://user-images.githubusercontent.com/4015046/198890445-13551bcf-208b-44a2-9fb9-09943f4efa2e.png)
+
 <b>2022-10-30 #2</b></br>
 -Implemented system to move both in x and y based on view angle (not working quite right but good enough for testing at the moment)</br>
 -Added a createBlock function to draw 4 segments at once</br>
