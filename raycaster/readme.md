@@ -2,6 +2,7 @@
 -Increased the number of rays (1048). This makes the resolution much higher.</br>
 -Textured the sky/ground + walls. Wall textures have to be entirely seamless in X-axis (else they appear to "slide")</br>
 -Inverted the rays/walls loops when rendering.</br>
+-Press F10 to toggle 2D view (not recommended since movement is still not properly working).</br>
 -Movement still needs to be fixed. Also need to add collisions.</br>
 
 ![textured1](https://user-images.githubusercontent.com/4015046/198899634-1a09333a-8417-4817-8020-aa9c4a207b02.png)
