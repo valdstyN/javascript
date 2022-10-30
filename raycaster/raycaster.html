@@ -95,7 +95,8 @@
               rays[f][3] = v[1];
               dist = distance([playerX,playerY],[v[0],v[1]]);
               dist = c3D.height - dist; // we invert! what is closer (lower distance) will now be bigger than what is farther away
-              if(dist>vertices[f]){
+              // we only draw if the new distance/wall height is bigger than any previously intersected wall for this ray
+              if(dist>vertices[f]){ 
                   vertices[f]=dist;
                   let wh = c3D.height-dist;
                   let rc = 255-(Math.floor(dist/2)); // basic shading
