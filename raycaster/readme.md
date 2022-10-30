@@ -1,5 +1,5 @@
 <b>2022-10-30 #3</b></br>
--Fixed fish-eye effect (TBC if all good)</br>
+-Attempt to correct fish-eye effect (not perfect yet)</br>
 -Externalized the FOV as a variable</br>
 -Created a degree to rad function (d2r)</br>
 -Movement is still an issue. For now, I implemented WASD movement + left/right to turn camera.</br>
