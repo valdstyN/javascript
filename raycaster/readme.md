@@ -4,8 +4,9 @@
 -Inverted the rays/walls loops when rendering.</br>
 -Press F10 to toggle 2D view (not recommended since movement is still not properly working).</br>
 -Movement still needs to be fixed. Also need to add collisions.</br>
+-Shading has been inverted (darker colours in the back, lighter in the front).</br>
 
-![textured1](https://user-images.githubusercontent.com/4015046/198899634-1a09333a-8417-4817-8020-aa9c4a207b02.png)
+![textured1](https://user-images.githubusercontent.com/4015046/198900423-2a9d6544-d6b7-467a-b03e-df09d4b8fe0b.png)
 
 <b>2022-10-30 #3</b></br>
 -Attempt to correct fish-eye effect (not perfect yet)</br>
