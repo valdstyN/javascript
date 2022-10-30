@@ -1,3 +1,12 @@
+<b>2022-10-30 #3</b></br>
+-Fixed fish-eye effect (TBC if all good)</br>
+-Externalized the FOV as a variable</br>
+-Created a degree to rad function (d2r)</br>
+-Movement is still an issue. For now, I implemented WASD movement + left/right to turn camera.
+-Fixed shading issue (RGB low values sometimes exceeded)
+
+![fez1](https://user-images.githubusercontent.com/4015046/198890071-919a645a-7ccc-43e3-b939-33ea614f5e05.png)
+
 <b>2022-10-30 #2</b></br>
 -Implemented system to move both in x and y based on view angle (not working quite right but good enough for testing at the moment)</br>
 -Added a createBlock function to draw 4 segments at once</br>
