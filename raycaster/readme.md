@@ -1,3 +1,10 @@
+<b>2022-10-30 #2</b></br>
+-Implemented system to move both in x and y based on view angle (not working quite right but good enough for testing at the moment)</br>
+-Added a createBlock function to draw 4 segments at once</br>
+-Improved a bit the rendering</br>
+
+![20221030b](https://user-images.githubusercontent.com/4015046/198876456-f27025b1-2661-46f3-bd90-cbd544dc3df1.png)
+
 <b>2022-10-30</b></br>
 -Added a player that can move up and down.</br>
 -Rays are only projected for a limited viewscope.</br>
