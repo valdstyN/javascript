@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript">
+
+      var walls = [];
+      var rays = [];
+      var playerX = 150;
+      var playerY = 150;
+      var playerA = -1.7146018366025522;
+      var playerSize = 10;
+      var fps = 30;
+      var vertices = []; //  we'll store each distance found per vertex; if bigger than previous, then we won't draw
+
+      function vertex(line1,line2){
+        let where = [];
+        // first line segment
+        let x1 = line1[0];let y1 = line1[1];
+        let x2 = line1[2];let y2 = line1[3];
+        // second line segment
+        let x3 = line2[0];let y3 = line2[1];
+        let x4 = line2[2];let y4 = line2[3];
+        // calculate intersection point
+        let t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4))/((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+        let u = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2))/((x1-x2)*(y3-y4) - (y1-y2)*(x3-x4));
+        if(t>=0 && t<=1 && u>=0 && u<=1){
+              where[0]=x1+t*(x2-x1);
+              where[1]=y1+t*(y2-y1);
+        } else {
+          return false;
+        }
+        return where;
+      }
+
+      function distance([x1,y1],[x2,y2]){
+        return Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+      }
+
+      function createSegment(x1,y1,x2,y2){
+        return [x1,y1,x2,y2];
+      }
+
+      function createBlock(x,y,w,h){
+        walls.push(createSegment(x,y,x+w,y));
+        walls.push(createSegment(x,y,x,y+h));
+        walls.push(createSegment(x+w,y,x+w,y+h));
+        walls.push(createSegment(x,y+h,x+w,y+h));
+      }
+
+      function drawSegments(arr,arrType){
+        for(let w=0; w<arr.length;w++){
+          var c = document.getElementById('canvas');
+          var ctx = c.getContext('2d');
+          if(arrType=='wall'){
+            ctx.lineWidth = 4;ctx.strokeStyle = "red";
+          }else{
+            ctx.lineWidth = 1;ctx.strokeStyle = "#ccc";
+          }
+            ctx.beginPath();
+            ctx.moveTo(arr[w][0],arr[w][1]);
+            ctx.lineTo(arr[w][2],arr[w][3]);
+            ctx.stroke();
+        }
+      }
+
+      function drawScreen(){
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx3D.clearRect(0,0,c3D.width,c3D.height);
+        // draw rays and walls
+        let mx = playerX;
+        let my = playerY;
+        mx = mx<0?0:mx>c.width?c.width:mx;
+        my = my<0?0:my>c.height?c.height:my;
+        let r = c.width;
+        let h = 0;
+        let k = c.height/2;
+        let dist = 0;
+        rays = [];
+        for (let i = playerA-(Math.PI/5); i < playerA+(Math.PI/5); i+=0.01){
+          let dx = r*Math.cos(i)-h;
+          let dy = r*Math.sin(i)+k;
+          rays.push(createSegment(mx,my, dx+k, dy-h));
+        }
+        vertices = [];
+        // draw sky
+        ctx3D.fillStyle = "blue";
+        ctx3D.fillRect(0,0,c3D.width,c3D.height/2);
+        // draw ground
+        ctx3D.fillStyle = "green";
+        ctx3D.fillRect(0,c3D.height/2,c3D.width,c3D.height);
+
+        for(f in rays){
+          vertices[f]=0;
+          for(w in walls){
+            let v = vertex(rays[f], walls[w]);
+            if(v){
+              rays[f][2] = v[0];
+              rays[f][3] = v[1];
+              dist = distance([playerX,playerY],[v[0],v[1]]);
+              dist = c3D.height - dist; // we invert! what is closer (lower distance) will now be bigger than what is farther away
+
+              if(dist>vertices[f]){
+                  vertices[f]=dist;
+                  let rc = 255-(Math.floor(dist/2)); // basic shading
+                  let gc = 255-(Math.floor(dist/2)); // basic shading
+                  let bc = 255-(Math.floor(dist/2)); // basic shading
+                  ctx3D.fillStyle = "#"+rc.toString(16)+gc.toString(16)+bc.toString(16);
+                  ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2),6,dist);
+              }
+            }
+           }
+         }
+        drawSegments(walls,'wall');
+        drawSegments(rays,'ray');
+        // draw character
+        ctx.fillStyle = "blue";
+        ctx.beginPath();
+        ctx.arc(playerX, playerY, 10, 0, Math.PI * 2, true);
+  	    ctx.fill();
+      }
+
+      function turnPlayer(a){
+        // 1 for right, -1 left
+        playerA+=a;
+      }
+      function movePlayer(z){
+        // this doesn't work out quite right
+        let r = 1;
+        let h = 0;
+        let k = 1/2;
+        let zz = playerA+Math.PI;
+        let dx = r*Math.cos(zz+z)-h;
+        let dy = r*Math.sin(zz+z)+k;
+        playerX += dx*-1;
+        if(z<0)playerY -= dy;
+        if(z>0)playerY += dy;
+      }
+
+      function keyPressed(e){
+        switch(e.keyCode){
+          case 38:movePlayer(-0.1);break;
+    			case 40:movePlayer(+0.1);break;
+    			case 37:turnPlayer(-0.1);break;
+    			case 39:turnPlayer(+0.1);break;
+        }
+      }
+
+    </script>
+    <style media="screen">
+      canvas{
+        border:1px solid #000;
+        float:left;
+        margin: 10px;
+      }
+      #main{
+        outline:none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" tabIndex="1">
+        <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
+    <div class="">
+      <canvas id="canvas3D" width="640" height="480"></canvas>
+    </div>
+
+    <script type="text/javascript">
+      var m = document.getElementById('main');
+      var c = document.getElementById('canvas');
+      var c3D = document.getElementById('canvas3D');
+      var ctx = c.getContext('2d');
+      var ctx3D = c3D.getContext('2d');
+      ctx3D.fillStyle = "grey";
+      // create a border
+      createBlock(0,0,c.width,c.height);
+      // create two blocks
+      createBlock(50,50,50,50);
+      createBlock(300,250,200,50);
+      createBlock(0,250,200,50);
+
+      setInterval(drawScreen, 1000/fps);
+      m.addEventListener("keydown", keyPressed, false);
+      m.focus();
+      //drawSegments();
+    </script>
+  </body>
+</html>
