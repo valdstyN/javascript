@@ -115,12 +115,12 @@
 
               if(dist>vertices[f]){
                   vertices[f]=dist;
-                  let rc = 255-(Math.floor(dist/2)); // basic shading
-                  let gc = 255-(Math.floor(dist/2)); // basic shading
-                  let bc = 255-(Math.floor(dist/2)); // basic shading
-                  rc=rc<0?0:rc;
-                  gc=gc<0?0:gc;
-                  bc=bc<0?0:bc;
+                  let rc = (Math.floor(dist/2)); // basic shading
+                  let gc = (Math.floor(dist/2)); // basic shading
+                  let bc = (Math.floor(dist/2)); // basic shading
+                  rc=rc>255?255:rc;
+                  gc=gc>255?255:gc;
+                  bc=bc>255?255:bc;
                   ctx3D.fillStyle = "#" + ("0"+rc.toString(16)).substr(-2) + ("0"+gc.toString(16)).substr(-2) + ("0"+bc.toString(16)).substr(-2);
                   // ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
                   // uncomment above and remove all lines below to render with a basic colour
