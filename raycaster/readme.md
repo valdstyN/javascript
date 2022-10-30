@@ -17,7 +17,7 @@
 <b>2022-10-29</b></br>
 -Code cleaned up</br>
 -Now handle 360 rays</br>
--Vertices are now used to "stop" the rays projected onto the walls</br>
+-Vertices are now used to properly define the coordinates at which the rays collide with the walls. All rays are now drawn.</br>
 
 ![2](https://user-images.githubusercontent.com/4015046/198852853-2e7690a1-2d81-4292-bb6f-414f9e9bc839.png)
 
@@ -25,6 +25,8 @@
 
 <b>2022-03-03</b></br>
 -1st draft of ray caster.</br>
--The script only draws two randoms lines (walls) and projects a couple of rays (not 360).</br>
+-The script only draws two randoms lines (walls) and projects a couple of rays (not 360). When it a ray meets a wall, it is not drawn.</br>
 -Next step is to define a viewscope and renders a 1st person view.</br>
--Project went dormant</br>
+-Project went dormant.</br>
+
+![firstDraft](https://user-images.githubusercontent.com/4015046/198876642-0fc7a6fb-eb12-4173-8dd1-5df024bc4c9a.jpg)
