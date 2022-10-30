@@ -2,8 +2,8 @@
 -Fixed fish-eye effect (TBC if all good)</br>
 -Externalized the FOV as a variable</br>
 -Created a degree to rad function (d2r)</br>
--Movement is still an issue. For now, I implemented WASD movement + left/right to turn camera.
--Fixed shading issue (RGB low values sometimes exceeded)
+-Movement is still an issue. For now, I implemented WASD movement + left/right to turn camera.</br>
+-Fixed shading issue (RGB low values sometimes exceeded)</br>
 
 ![fez1](https://user-images.githubusercontent.com/4015046/198890071-919a645a-7ccc-43e3-b939-33ea614f5e05.png)
 
