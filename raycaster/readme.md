@@ -1,3 +1,8 @@
+<b>2022-10-31</b></br>
+-Fixed the movement (now with arrow keys)
+-F11 can be pressed to change settings (FPS, 3D view width & height)
+-Fixed a visual glitch
+
 <b>2022-10-30 #4</b></br>
 -Increased the number of rays (1048). This makes the resolution much higher.</br>
 -Textured the sky/ground + walls. Wall textures have to be entirely seamless in X-axis (else they appear to "slide")</br>
