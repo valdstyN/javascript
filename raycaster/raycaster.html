@@ -14,6 +14,7 @@
       var fps = 30;
       var vertices = []; //  we'll store each distance found per vertex; if bigger than previous, then we won't draw
       var fov = 60;
+      var render2D = true;
 
       function vertex(line1,line2){
         let where = [];
@@ -93,12 +94,12 @@
         // draw sky
         ctx3D.fillStyle = "blue";
         //ctx3D.fillRect(0,0,c3D.width,c3D.height/2);  --plain colour
-        ctx3D.drawImage(sky,0,0,640,320);
+        ctx3D.drawImage(sky,0,0,c3D.width,c3D.height/2);
 
         // draw ground
         ctx3D.fillStyle = "green";
         //ctx3D.fillRect(0,c3D.height/2,c3D.width,c3D.height); --plain colour
-        ctx3D.drawImage(grass,0,240,640,240);
+        ctx3D.drawImage(grass,0,c3D.height/2,c3D.width,c3D.height/2);
 
         for(w in walls){
           let txtwall = 0;
@@ -127,7 +128,7 @@
                   ctx3D.globalAlpha = 1;
                   ctx3D.drawImage(wall, txtwall,5, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
                   txtwall++;
-                  if(txtwall>750)txtwall=0;
+                  if(txtwall==750)txtwall=0;
                   ctx3D.globalAlpha = 0.5;
                   // we still add a coloured layer but with transparency - this creates a kind of shadow
                   ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
@@ -136,13 +137,15 @@
             }
            }
          }
-        drawSegments(walls,'wall');
-        drawSegments(rays,'ray');
-        // draw character
-        ctx.fillStyle = "blue";
-        ctx.beginPath();
-        ctx.arc(playerX, playerY, 10, 0, Math.PI * 2, true);
-  	    ctx.fill();
+        if(render2D){
+          drawSegments(walls,'wall');
+          drawSegments(rays,'ray');
+          // draw character
+          ctx.fillStyle = "blue";
+          ctx.beginPath();
+          ctx.arc(playerX, playerY, 10, 0, Math.PI * 2, true);
+    	    ctx.fill();
+        }
       }
 
       function turnPlayer(a){
@@ -151,42 +154,45 @@
         if(playerA<0)playerA=359;
         if(playerA>360)playerA=0;
       }
+
       function movePlayer(z){
-        // this doesn't work out quite right
         let r = 1;
         let h = 0;
-        let k = 1/2;
-        let zz = d2r(playerA);
-        let dx = r*Math.cos(zz+z)-h;
-        let dy = r*Math.sin(zz+z)+k;
-        playerX += dx*-1;
-        if(z<0)playerY -= dy;
-        if(z>0)playerY += dy;
+        let k = 0;
+        let zz = d2r(playerA+(z<0?180:0));
+        let dx = Math.abs(z)*r*Math.cos(zz)-h;
+        let dy = Math.abs(z)*r*Math.sin(zz)+k;
+        playerX += dx;
+        playerY += dy;
       }
 
-      function keyPressed(e){
-          switch(e.keyCode){
-            case 38:movePlayer(-0.1);break;
-      			case 40:movePlayer(+0.1);break;
-      			case 37:turnPlayer(-2);break;
-      			case 39:turnPlayer(+2);break;
-            // wasd
-            case 90:playerY--;break;
-            case 83:playerY++;break;
-            case 81:playerX--;break;
-            case 68:playerX++;break;
-            // toggle 2D view
-            case 121:
-      				e.preventDefault();
-      				e.stopPropagation();
-              if(c.style.display!="none"){
-                c.style.display="none";
-              }else{
-                c.style.display="";
-              }
-      			break;
-          }
-      }
+      // every frame, we check key(s) which are pressed and act accordingly
+      // this is much smoother than validating events directly with keydown
+      setInterval(function(){
+
+        // arrow keys to move and turn
+        if(mapKeyPressed['ArrowUp']){movePlayer(1.5)}
+        if(mapKeyPressed['ArrowDown']){movePlayer(-1.5)}
+        if(mapKeyPressed['ArrowLeft']){turnPlayer(-2)}
+        if(mapKeyPressed['ArrowRight']){turnPlayer(2)}
+        if(mapKeyPressed['F10']){
+            if(c.style.display!="none"){
+              c.style.display="none";
+              render2D = false;
+            }else{
+              c.style.display="";
+              render2D = true;
+            }
+            mapKeyPressed['F10'] = false;
+        }
+        if(mapKeyPressed['F11']){
+            let options = prompt("FPS,Width,Height",fps+","+c3D.width+","+c3D.height);
+            fps = options.split(",")[0];
+            c3D.width = options.split(",")[1];
+            c3D.height = options.split(",")[2];
+            mapKeyPressed['F11'] = false;
+        }
+      },1000/fps);
 
     </script>
     <style media="screen">
@@ -202,12 +208,11 @@
   </head>
   <body>
     <div id="main" tabIndex="1">
-        <canvas id="canvas" width="500" height="500"></canvas>
+      <canvas id="canvas" width="500" height="500"></canvas>
     </div>
     <div class="">
-      <canvas id="canvas3D" width="640" height="480"></canvas>
+      <canvas id="canvas3D" width="800" height="600"></canvas>
     </div>
-
     <script type="text/javascript">
       var m = document.getElementById('main');
       var c = document.getElementById('canvas');
@@ -215,6 +220,7 @@
       var ctx = c.getContext('2d');
       var ctx3D = c3D.getContext('2d');
       ctx3D.fillStyle = "grey";
+
       // create a border
       createBlock(0,0,c.width,c.height);
       // create two blocks
@@ -236,9 +242,25 @@
       var wall = new Image();
       wall.src='./wall.jpg';
 
-      setInterval(drawScreen, 1000/fps);
-      m.addEventListener("keydown", keyPressed, false);
+      var gameLoop = setInterval(drawScreen, 1000/fps);
+
+      var mapKeyPressed = [];
+      m.addEventListener("keydown", function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          mapKeyPressed[e.code] = true;
+      }, false);
+      m.addEventListener('keyup', function(e){
+         e.preventDefault();
+         e.stopPropagation();
+         mapKeyPressed[e.code] = false;
+      }, false);
+
+      document.addEventListener('click',function(){
+        m.focus();
+      });
       m.focus();
+
     </script>
   </body>
 </html>
