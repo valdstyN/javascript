@@ -1,8 +1,8 @@
 <b>2022-10-31</b></br>
--Fixed the movement (now with arrow keys)</br>
--F11 can be pressed to change settings (FPS, 3D view width & height)</br>
--Fixed a visual glitch</br>
--2D rendering is completely disabled (in code) when the display is hidden (F10)</br>
+-Fixed the movement (now with arrow keys). Multiple inputs are also accepted.</br>
+-F11 can be pressed to change settings (FPS, 3D view width & height).</br>
+-Fixed a visual glitch.</br>
+-2D rendering is completely disabled (in code) when the 2D display is hidden (F10).</br>
 
 <b>2022-10-30 #4</b></br>
 -Increased the number of rays (1048). This makes the resolution much higher.</br>
