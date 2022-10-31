@@ -10,11 +10,13 @@
       var playerX = 150;
       var playerY = 150;
       var playerA = 0;
-      var playerSize = 10;
+      var playerSize = 10;  // only for 2D render
       var fps = 30;
       var vertices = []; //  we'll store each distance found per vertex; if bigger than previous, then we won't draw
       var fov = 60;
       var render2D = true;
+      var blocks = [];  // we store blocks (4 segments to define a solid area)
+      var collideGap = 10; // avoid getting too close to the objects
 
       function vertex(line1,line2){
         let where = [];
@@ -44,7 +46,8 @@
         return [x1,y1,x2,y2,a];
       }
 
-      function createBlock(x,y,w,h){
+      function createBlock(x,y,w,h,solid){
+        blocks.push([x,y,x+w,y+h,solid]);
         walls.push(createSegment(x,y,x+w,y));
         walls.push(createSegment(x,y,x,y+h));
         walls.push(createSegment(x+w,y,x+w,y+h));
@@ -85,7 +88,6 @@
         let dist = 0;
         rays = [];
         for (let i = d2r(playerA-(fov/2)); i <= d2r(playerA+(fov/2)); i+=0.001){  // now casting 1000+ rays
-//        for (let i = playerA-(Math.PI/5); i < playerA+(Math.PI/5); i+=0.01){
           let dx = r*Math.cos(i)-h;
           let dy = r*Math.sin(i)+k;
           rays.push(createSegment(mx,my, dx+k, dy-h, i));
@@ -126,7 +128,7 @@
                   // ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
                   // uncomment above and remove all lines below to render with a basic colour
                   ctx3D.globalAlpha = 1;
-                  ctx3D.drawImage(wall, txtwall,5, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
+                  ctx3D.drawImage(wall, txtwall,0, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
                   txtwall++;
                   if(txtwall==750)txtwall=0;
                   ctx3D.globalAlpha = 0.5;
@@ -170,11 +172,26 @@
       // this is much smoother than validating events directly with keydown
       setInterval(function(){
 
+        let oldX = playerX;
+        let oldY = playerY;
+
         // arrow keys to move and turn
         if(mapKeyPressed['ArrowUp']){movePlayer(1.5)}
         if(mapKeyPressed['ArrowDown']){movePlayer(-1.5)}
         if(mapKeyPressed['ArrowLeft']){turnPlayer(-2)}
         if(mapKeyPressed['ArrowRight']){turnPlayer(2)}
+
+        for(b in blocks){
+          if(blocks[b][4]){
+            if(playerX>=(blocks[b][0]-collideGap) && playerX<=(blocks[b][2]+collideGap)){
+              if(playerY>=(blocks[b][1]-collideGap) && playerY<=(blocks[b][3]+collideGap)){
+                  playerX = oldX;
+                  playerY = oldY;
+              }
+            }
+          }
+        }
+
         if(mapKeyPressed['F10']){
             if(c.style.display!="none"){
               c.style.display="none";
@@ -222,18 +239,18 @@
       ctx3D.fillStyle = "grey";
 
       // create a border
-      createBlock(0,0,c.width,c.height);
+      createBlock(0,0,c.width,c.height,false);  // the last parameter defines whether it's solid or not
       // create two blocks
-      createBlock(50,50,50,50);
-      createBlock(300,250,200,50);
-      createBlock(0,250,200,50);
+      createBlock(50,50,50,50,true);
+      createBlock(300,250,200,50,true);
+      createBlock(0,250,200,50,true);
       // some pillars
-      createBlock(175,400,25,25);
-      createBlock(300,400,25,25);
-      createBlock(175,350,25,25);
-      createBlock(300,350,25,25);
-      createBlock(175,450,25,25);
-      createBlock(300,450,25,25);
+      createBlock(175,400,25,25,true);
+      createBlock(300,400,25,25,true);
+      createBlock(175,350,25,25,true);
+      createBlock(300,350,25,25,true);
+      createBlock(175,450,25,25,true);
+      createBlock(300,450,25,25,true);
 
       var sky = new Image();
       sky.src='./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg'; // name for source reference
