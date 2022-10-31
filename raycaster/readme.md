@@ -1,6 +1,7 @@
 <b>2022-10-31</b></br>
 -Fixed the forward/backward movement (now with arrow keys). *STILL some offset when moving in certain angles*.</br>
 -Multiple inputs are also accepted.</br>
+-Update the default 3D viewport to 800x600.</br>
 -F11 can be pressed to change settings (FPS, 3D view width & height).</br>
 -Fixed a visual glitch.</br>
 -2D rendering is completely disabled (in code) when the 2D display is hidden (F10).</br>
