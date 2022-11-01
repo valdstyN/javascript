@@ -16,7 +16,8 @@
       var fov = 60;
       var render2D = true;
       var blocks = [];  // we store blocks (4 segments to define a solid area)
-      var collideGap = 10; // avoid getting too close to the objects
+      var collideGap = 5; // avoid getting too close to the objects
+      var textures = [];
 
       function vertex(line1,line2){
         let where = [];
@@ -46,12 +47,12 @@
         return [x1,y1,x2,y2,a];
       }
 
-      function createBlock(x,y,w,h,solid){
+      function createBlock(x,y,w,h,solid,blockTexture){
         blocks.push([x,y,x+w,y+h,solid]);
-        walls.push(createSegment(x,y,x+w,y));
-        walls.push(createSegment(x,y,x,y+h));
-        walls.push(createSegment(x+w,y,x+w,y+h));
-        walls.push(createSegment(x,y+h,x+w,y+h));
+        walls.push(createSegment(x,y,x+w,y,blockTexture));
+        walls.push(createSegment(x,y,x,y+h,blockTexture));
+        walls.push(createSegment(x+w,y,x+w,y+h,blockTexture));
+        walls.push(createSegment(x,y+h,x+w,y+h,blockTexture));
       }
 
       function drawSegments(arr,arrType){
@@ -96,12 +97,12 @@
         // draw sky
         ctx3D.fillStyle = "blue";
         //ctx3D.fillRect(0,0,c3D.width,c3D.height/2);  --plain colour
-        ctx3D.drawImage(sky,0,0,c3D.width,c3D.height/2);
+        ctx3D.drawImage(textures['sky01'],0,0,c3D.width,c3D.height/2);
 
         // draw ground
         ctx3D.fillStyle = "green";
         //ctx3D.fillRect(0,c3D.height/2,c3D.width,c3D.height); --plain colour
-        ctx3D.drawImage(grass,0,c3D.height/2,c3D.width,c3D.height/2);
+        ctx3D.drawImage(textures['grass01'],0,c3D.height/2,c3D.width,c3D.height/2);
 
         for(w in walls){
           let txtwall = 0;
@@ -117,24 +118,29 @@
               dist = c3D.height * 30 / z; //dist;
 
               if(dist>vertices[f]){
+
                   vertices[f]=dist;
-                  let rc = (Math.floor(dist/2)); // basic shading
-                  let gc = (Math.floor(dist/2)); // basic shading
-                  let bc = (Math.floor(dist/2)); // basic shading
-                  rc=rc>255?255:rc;
-                  gc=gc>255?255:gc;
-                  bc=bc>255?255:bc;
+                  let rc = (Math.floor(dist/3)); // basic shading
+                  let gc = (Math.floor(dist/3)); // basic shading
+                  let bc = (Math.floor(dist/3)); // basic shading
+                  rc=rc>155?155:rc;
+                  gc=gc>155?155:gc;
+                  bc=bc>155?155:bc;
                   ctx3D.fillStyle = "#" + ("0"+rc.toString(16)).substr(-2) + ("0"+gc.toString(16)).substr(-2) + ("0"+bc.toString(16)).substr(-2);
                   // ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
                   // uncomment above and remove all lines below to render with a basic colour
                   ctx3D.globalAlpha = 1;
-                  ctx3D.drawImage(wall, txtwall,0, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
+                  ctx3D.drawImage(textures[walls[w][4]], txtwall,0, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
+
+                  // offset for textures. not correct. depending on resolution/number of rays, this won't work
                   txtwall++;
                   if(txtwall==750)txtwall=0;
+
                   ctx3D.globalAlpha = 0.5;
                   // we still add a coloured layer but with transparency - this creates a kind of shadow
-                  ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1
+                  ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1 for the width
                   ctx3D.globalAlpha = 1;
+
               }
             }
            }
@@ -239,25 +245,30 @@
       ctx3D.fillStyle = "grey";
 
       // create a border
-      createBlock(0,0,c.width,c.height,false);  // the last parameter defines whether it's solid or not
-      // create two blocks
-      createBlock(50,50,50,50,true);
-      createBlock(300,250,200,50,true);
-      createBlock(0,250,200,50,true);
+      createBlock(0,0,c.width,c.height,false,'wall01');  // the last but not one parameter defines whether it's solid or not
+      // create a big pillar
+      createBlock(50,50,50,50,true,'wall02');
+      // create a separation
+      createBlock(300,250,200,50,true,'wall01');
+      createBlock(0,250,200,50,true,'wall01');
       // some pillars
-      createBlock(175,400,25,25,true);
-      createBlock(300,400,25,25,true);
-      createBlock(175,350,25,25,true);
-      createBlock(300,350,25,25,true);
-      createBlock(175,450,25,25,true);
-      createBlock(300,450,25,25,true);
+      createBlock(175,400,25,25,true,'wall01');
+      createBlock(300,400,25,25,true,'wall01');
+      createBlock(175,350,25,25,true,'wall01');
+      createBlock(300,350,25,25,true,'wall01');
+      createBlock(175,450,25,25,true,'wall01');
+      createBlock(300,450,25,25,true,'wall01');
 
-      var sky = new Image();
-      sky.src='./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg'; // name for source reference
-      var grass = new Image();
-      grass.src='./grass.png';
-      var wall = new Image();
-      wall.src='./wall.jpg';
+      // load textures
+      textures.push('sky01','grass01','wall01','wall02');
+      var sky = new Image();    sky.src='./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg'; // name for source reference
+      var grass = new Image();  grass.src='./grass.png';
+      var wall = new Image();   wall.src='./wall.jpg';
+      var wall2 = new Image();   wall2.src='./wall02.jpg';
+      textures['sky01'] = sky;
+      textures['grass01'] = grass;
+      textures['wall01'] = wall;
+      textures['wall02'] = wall2;
 
       var gameLoop = setInterval(drawScreen, 1000/fps);
 
