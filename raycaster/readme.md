@@ -3,8 +3,8 @@
 -Fixed a texture issue</br>
 -Tweaked shading system</br>
 -Reduced collision gap</br>
--Current issues: fish-eye effect reoccurs when very close to a wall, collision system not smooth, movement still not 100% correct</br>
--Improvement: shading system</br>
+-Current issues: fish-eye effect reoccurs when very close to a wall, texturing, movement still not 100% correct</br>
+-Improvement: shading system, collision system</br>
 
 ![ggz1](https://user-images.githubusercontent.com/4015046/199214618-65f8f0be-bb0c-4247-814c-b0fcffc21c76.jpg)
 
