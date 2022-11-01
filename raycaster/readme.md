@@ -1,7 +1,8 @@
 <b>2022-11-01</b></br>
 -Added an array to store textures and an extra parameter when creating blocks/segments to reference the textures.</br>
 -Fixed a texture issue</br>
--Reduce collision gap</br>
+-Tweaked shading system</br>
+-Reduced collision gap</br>
 -Current issues: fish-eye effect reoccurs when very close to a wall, collision system not smooth, movement still not 100% correct</br>
 -Improvement: shading system</br>
 
