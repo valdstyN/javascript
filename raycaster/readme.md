@@ -1,3 +1,12 @@
+<b>2022-11-01</b></br>
+-Added an array to store textures and an extra parameter when creating blocks/segments to reference the textures.</br>
+-Fixed a texture issue</br>
+-Reduce collision gap</br>
+-Current issues: fish-eye effect reoccurs when very close to a wall, collision system not smooth, movement still not 100% correct</br>
+-Improvement: shading system</br>
+
+![ggz1](https://user-images.githubusercontent.com/4015046/199214618-65f8f0be-bb0c-4247-814c-b0fcffc21c76.jpg)
+
 <b>2022-10-31</b></br>
 -Fixed the forward/backward movement (now with arrow keys). *STILL some offset when moving in certain angles*.</br>
 -Multiple inputs are also accepted.</br>
