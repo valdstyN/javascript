@@ -18,6 +18,8 @@
       var blocks = [];  // we store blocks (4 segments to define a solid area)
       var collideGap = 5; // avoid getting too close to the objects
       var textures = [];
+      var entities = [];
+      var fullscreen = false;
 
       function vertex(line1,line2){
         let where = [];
@@ -55,6 +57,13 @@
         walls.push(createSegment(x,y+h,x+w,y+h,blockTexture));
       }
 
+      function createEntity(x,y,w,entityTexture){
+          // entity are simple plane shapes (segments) that will always rotate towards the user (same angle?)
+          // mode 7
+          entities.push(createSegment(x,y,x+w,y+5,entityTexture));
+      }
+
+
       function drawSegments(arr,arrType){
         for(let w=0; w<arr.length;w++){
           var c = document.getElementById('canvas');
@@ -78,7 +87,7 @@
       function drawScreen(){
         ctx.clearRect(0,0,c.width,c.height);
         ctx3D.clearRect(0,0,c3D.width,c3D.height);
-        // draw rays and walls
+
         let mx = playerX;
         let my = playerY;
         mx = mx<0?0:mx>c.width?c.width:mx;
@@ -113,12 +122,12 @@
               rays[f][2] = v[0];
               rays[f][3] = v[1];
               dist = distance([playerX,playerY],[v[0],v[1]]);
+
               //dist = c3D.height - dist;    original method to calculate height (before fish-eye correction)
               let z = dist * Math.cos(d2r(fov));
-              dist = c3D.height * 30 / z; //dist;
+              dist = c3D.height * 30 / z //dist;
 
               if(dist>vertices[f]){
-
                   vertices[f]=dist;
                   let rc = (Math.floor(dist/3)); // basic shading
                   let gc = (Math.floor(dist/3)); // basic shading
@@ -132,7 +141,9 @@
                   ctx3D.globalAlpha = 1;
                   ctx3D.drawImage(textures[walls[w][4]], txtwall,0, 1,574, Math.floor((c3D.width/rays.length)*f),Math.floor((c3D.height/2)-(dist/2)), 1,dist);
 
-                  // offset for textures. not correct. depending on resolution/number of rays, this won't work
+                  // offset for textures. not correct.
+                  // the more rays we are shooting on the wall, the faster x will increase and wrap (thus texture repeats more)
+                  // so I should know how many rays are hitting the wall?
                   txtwall++;
                   if(txtwall==750)txtwall=0;
 
@@ -140,7 +151,6 @@
                   // we still add a coloured layer but with transparency - this creates a kind of shadow
                   ctx3D.fillRect(Math.floor((c3D.width/rays.length)*f),(c3D.height/2)-(dist/2), 1,dist); // with lower res I used (fov/10)+1 for the width
                   ctx3D.globalAlpha = 1;
-
               }
             }
            }
@@ -148,6 +158,7 @@
         if(render2D){
           drawSegments(walls,'wall');
           drawSegments(rays,'ray');
+          //drawSegments(entities,'wall');
           // draw character
           ctx.fillStyle = "blue";
           ctx.beginPath();
@@ -193,6 +204,7 @@
               if(playerY>=(blocks[b][1]-collideGap) && playerY<=(blocks[b][3]+collideGap)){
                   playerX = oldX;
                   playerY = oldY;
+                  break; // optimization - no need to further check for collisions
               }
             }
           }
@@ -215,10 +227,31 @@
             c3D.height = options.split(",")[2];
             mapKeyPressed['F11'] = false;
         }
+        if(mapKeyPressed['F12']){
+          if(!fullscreen){
+            c.style.display = "none";
+            render2D = false;
+            c.style.margin = "0px";
+            c3D.style.margin = "0px";
+            c3D.style.width = window.innerWidth + "px";
+            c3D.style.height = window.innerHeight + "px";
+            fullscreen = true;
+          }else{
+            c.style.display = "";
+            render2D = true;
+            c.style.margin = "10px";
+            c3D.style.margin = "10px";
+            c3D.style.width = c3D.width + "px";
+            c3D.style.height = c3D.height + "px";
+            fullscreen = false;
+          }
+        }
       },1000/fps);
 
     </script>
     <style media="screen">
+      *{padding:0;margin:0;}
+      body{overflow: hidden}
       canvas{
         border:1px solid #000;
         float:left;
@@ -273,21 +306,16 @@
       var gameLoop = setInterval(drawScreen, 1000/fps);
 
       var mapKeyPressed = [];
-      m.addEventListener("keydown", function(e){
+      document.addEventListener("keydown", function(e){
           e.preventDefault();
           e.stopPropagation();
           mapKeyPressed[e.code] = true;
       }, false);
-      m.addEventListener('keyup', function(e){
+      document.addEventListener('keyup', function(e){
          e.preventDefault();
          e.stopPropagation();
          mapKeyPressed[e.code] = false;
       }, false);
-
-      document.addEventListener('click',function(){
-        m.focus();
-      });
-      m.focus();
 
     </script>
   </body>
