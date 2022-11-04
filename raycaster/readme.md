@@ -1,3 +1,6 @@
+<b>2022-11-04</b></br>
+-Implemented fullscreen mode (can be toggled with F12)</br>
+
 <b>2022-11-01</b></br>
 -Added an array to store textures and an extra parameter when creating blocks/segments to reference the textures.</br>
 -Fixed a texture issue</br>
