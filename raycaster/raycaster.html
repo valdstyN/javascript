@@ -247,6 +247,12 @@
           }
         }
       },1000/fps);
+      
+      function loadTexture(url, textureName){
+        textures.push(textureName);
+        textures[textureName] = new Image();
+        textures[textureName].src = url;
+      }
 
     </script>
     <style media="screen">
@@ -292,16 +298,11 @@
       createBlock(175,450,25,25,true,'wall01');
       createBlock(300,450,25,25,true,'wall01');
 
-      // load textures
-      textures.push('sky01','grass01','wall01','wall02');
-      var sky = new Image();    sky.src='./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg'; // name for source reference
-      var grass = new Image();  grass.src='./grass.png';
-      var wall = new Image();   wall.src='./wall.jpg';
-      var wall2 = new Image();   wall2.src='./wall02.jpg';
-      textures['sky01'] = sky;
-      textures['grass01'] = grass;
-      textures['wall01'] = wall;
-      textures['wall02'] = wall2;
+      // load textures (url, name)
+      loadTexture("./grass.png","grass01");
+      loadTexture("./daniel-apodaca-NwCIEX2UIL0-unsplash.jpg","sky01");
+      loadTexture("./wall.jpg","wall01");
+      loadTexture("./wall02.jpg","wall02");
 
       var gameLoop = setInterval(drawScreen, 1000/fps);
 
