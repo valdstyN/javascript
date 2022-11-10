@@ -68,40 +68,45 @@
       }
       var el = document.getElementsByClassName("cell");
       for(var u = 0; u<el.length; u++){
-        el[u].addEventListener("click",function(){
-          if(this.className.indexOf("bombcover")!=-1){
-            alert("Boom! Game over");
-            newGame();
-          }else{
-            if(this.className.indexOf("bomb")!=-1){
-              // already un-covered
-              // do nothing
+        el[u].addEventListener("mousedown",function(e){
+          if(e.button==0){
+            if(this.className.indexOf("bombcover")!=-1){
+              alert("Boom! Game over");
+              newGame();
             }else{
-              // check and count any connecting mine
-              thisX = parseInt(this.className.substr(this.className.indexOf("x")+1, 2));
-              thisY = parseInt(this.className.substr(this.className.indexOf("y")+1, 2));
-              let cntMine = 0;
-              for(let y = -1;y<=1;y++){
-                for(let x = -1;x<=1;x++){
-                  if(thisY+y<maxCol &&thisY+y>0 && thisX+x<maxRow && thisX+x>0){
-                    if(minefield[thisY+y][thisX+x] == 1){
-                      cntMine ++;
+              if(this.className.indexOf("bomb")!=-1){
+                // already un-covered
+                // do nothing
+              }else{
+                // check and count any connecting mine
+                thisX = parseInt(this.className.substr(this.className.indexOf("x")+1, 2));
+                thisY = parseInt(this.className.substr(this.className.indexOf("y")+1, 2));
+                let cntMine = 0;
+                for(let y = -1;y<=1;y++){
+                  for(let x = -1;x<=1;x++){
+                    if(thisY+y<maxCol &&thisY+y>0 && thisX+x<maxRow && thisX+x>0){
+                      if(minefield[thisY+y][thisX+x] == 1){
+                        cntMine ++;
+                      }
                     }
                   }
                 }
+                document.querySelectorAll(".y"+thisY+".x"+thisX)[0].innerHTML = cntMine;
+                document.querySelectorAll(".y"+thisY+".x"+thisX)[0].className += " clear";
               }
-              document.querySelectorAll(".y"+thisY+".x"+thisX)[0].innerHTML = cntMine;
-              document.querySelectorAll(".y"+thisY+".x"+thisX)[0].className += " clear";
             }
+          }
+          if(e.button==2 && this.className.indexOf("clear")==-1){
+              if(this.className.indexOf("flag")==-1){
+                this.className += " flag";
+                this.innerHTML = "?";
+              }else{
+                this.className = this.className.replace("flag","");
+                this.innerHTML = "";
+              }
           }
         }, false);
       }
-      /*
-      document.getElementsByClassName("grid")[0].addEventListener("mousedown",function(e){
-        e.preventDefault();
-        e.button = 2 if right click
-      },false);
-      */
     }
     newGame();
     </script>
