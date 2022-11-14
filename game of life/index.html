@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>JS Bin</title>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+</head>
+
+ <style>
+   *{margin:5px; padding:0px;}
+   body, html{margin:0 auto; width:780px;}
+      .dead, .dying{float:left; width:15px; height:15px; border-top:1px solid #999999;border-left:1px solid #999999; background:#fff;}
+      .alive, .growing{float:left; width:15px; height:15px; border-top:1px solid #999999;border-left:1px solid #999999; background:#000;}
+   .alive, .growing{background:none; background-image:url(bg.png);}
+</style>
+
+ <script>
+
+for(var y=1;y<=30;y++){
+   for(var x=1;x<=30;x++){
+     document.write("<div id='"+y+"-"+x+"' class='dead' onmousedown='switchCell(this.id);'></div>");
+   }
+}
+
+function switchCell(clicked){
+   if($("#"+clicked).attr("class")=="dead"){
+       $("#"+clicked).addClass("alive");
+       $("#"+clicked).removeClass("dead");
+   }else{
+       $("#"+clicked).addClass("dead");
+       $("#"+clicked).removeClass("alive");
+   }
+}
+
+function startLoop(){
+
+   for(var y=1;y<=30;y++){
+      for(var x=1;x<=30;x++){
+
+       var nbNeighbour=0;
+
+       if($("#"+(y-1)+"-"+(x-1)).attr("class")=="alive"){nbNeighbour++;}
+       if($("#"+(y-1)+"-"+x).attr("class")=="alive"){nbNeighbour++;}
+       if($("#"+(y-1)+"-"+(x+1)).attr("class")=="alive"){nbNeighbour++;}
+
+       if($("#"+y+"-"+(x-1)).attr("class")=="alive"){nbNeighbour++;}
+       if($("#"+y+"-"+(x+1)).attr("class")=="alive"){nbNeighbour++;}
+
+       if($("#"+(y+1)+"-"+(x-1)).attr("class")=="alive"){nbNeighbour++;}
+       if($("#"+(y+1)+"-"+x).attr("class")=="alive"){nbNeighbour++;}
+       if($("#"+(y+1)+"-"+(x+1)).attr("class")=="alive"){nbNeighbour++;}
+   
+
+
+       if($("#"+(y-1)+"-"+(x-1)).attr("class")=="dying"){nbNeighbour++;}
+       if($("#"+(y-1)+"-"+x).attr("class")=="dying"){nbNeighbour++;}
+       if($("#"+(y-1)+"-"+(x+1)).attr("class")=="dying"){nbNeighbour++;}
+
+       if($("#"+y+"-"+(x-1)).attr("class")=="dying"){nbNeighbour++;}
+       if($("#"+y+"-"+(x+1)).attr("class")=="dying"){nbNeighbour++;}
+
+       if($("#"+(y+1)+"-"+(x-1)).attr("class")=="dying"){nbNeighbour++;}
+       if($("#"+(y+1)+"-"+x).attr("class")=="dying"){nbNeighbour++;}
+       if($("#"+(y+1)+"-"+(x+1)).attr("class")=="dying"){nbNeighbour++;}
+
+
+       // dead and exactly 3 neighbours = LIVE
+       if($("#"+y+"-"+x).attr("class")=="dead" && nbNeighbour==3){
+                   $("#"+y+"-"+x).addClass("growing");
+                   $("#"+y+"-"+x).removeClass("dead");        
+            }
+       // alive and <2 neighbours = DEAD
+       if($("#"+y+"-"+x).attr("class")=="alive" && nbNeighbour<2){
+                   $("#"+y+"-"+x).addClass("dying");
+                   $("#"+y+"-"+x).removeClass("alive");        
+            }
+       // alive and >3 neighbours = DEAD
+       if($("#"+y+"-"+x).attr("class")=="alive" && nbNeighbour>3){
+                   $("#"+y+"-"+x).addClass("dying");
+                   $("#"+y+"-"+x).removeClass("alive");        
+            }
+       
+       }
+   }
+
+   for(var y=1;y<=30;y++){
+      for(var x=1;x<=30;x++){
+       if($("#"+y+"-"+x).attr("class")=="dying")
+       {
+                   $("#"+y+"-"+x).addClass("dead");
+                   $("#"+y+"-"+x).removeClass("dying");
+         }
+       if($("#"+y+"-"+x).attr("class")=="growing")
+       {
+                   $("#"+y+"-"+x).addClass("alive");
+                   $("#"+y+"-"+x).removeClass("growing");
+         }
+      }
+   }
+
+   // document.getElementById("gen").innerHTML=g+1;
+   e=setTimeout(function(){startLoop()},document.getElementById("delayer").value);
+}
+
+
+//t=setTimeout(function(){startLoop()},500);
+
+
+
+ </script>
+
+<body onload="execApp();">
+
+<input id="delayer" value="100">
+<input type=button onclick="startLoop();" value="Start">
+<input type=button onclick="clearTimeout(e);" value="Stop">
+<div id="gen" style="float:left;"></div>
+
+</body>
+</html>
