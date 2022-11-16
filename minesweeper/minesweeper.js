@@ -51,6 +51,7 @@
       // handle mouseclicks
       var el = document.getElementsByClassName("cell");
       for(var u = 0; u<el.length; u++){
+        el[u].addEventListener("contextmenu", ( e )=> { e.preventDefault(); return false; });
         el[u].addEventListener("mousedown",function(e){
           e.preventDefault();
 
