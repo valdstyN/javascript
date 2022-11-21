@@ -1,0 +1,261 @@
+*{margin:0;padding:0;}
+body{margin:10px;}	
+		
+			h1{font-family:verdana;}
+		
+			.worldRotation{
+				-webkit-transition: -webkit-transform 0.1s ease;
+				-o-transition: -o-transform 0.1s ease;
+				-moz-transition: -moz-transform 0.1s ease;		
+				transition: transform 0.1s ease;	
+				-ms-transition: -ms-transform 0.1s ease;						
+			}	
+			
+			#frame{
+				width:978px;
+				height:559px;
+				margin:0 auto;
+				position:relative;
+				background-image:url("./res/misc/frame.gif");
+			}
+			
+			#sky{
+				width:3000px;
+				height:3000px;
+				background-image:url("./res/map/skytest.png");
+				opacity:0.2;
+				position:absolute;
+				left:-1020px; /* (960/2) - (2000/2) */
+				top:-100px;							
+			}
+			
+			#screen{
+				width:920px;
+				height:500px;
+				border:1px solid #ccc;
+				margin:0 auto;
+				overflow:hidden;
+				position:relative;
+				top:30px;
+				left:2px;
+				background:#fff;
+			}
+			
+			#world{
+				width:2000px;
+				height:2000px;
+				background-image:url("./res/map/bg.gif");
+				position:absolute;
+				left:-540px; /* (2000/2) - (960/2) */
+				top:200px;
+			}
+			
+			.slide{
+				-webkit-transition: -webkit-transform 4s ease;
+				-moz-transition: -moz-transform 4s ease;
+				-o-transition: -o-transform 4s ease;
+				-ms-transition: -ms-transform 4s ease;				
+				transition: transform 4s ease;
+			}
+			.sright{
+				background-image:url("./res/unit/pingus_s.gif") !important;
+				width:56px !important; background-position:0 4px !important;
+				left:972px !important;
+			}
+			.sleft{				
+				background-image:url("./res/unit/pingus_s0.gif") !important;
+				width:56px !important;
+				background-position:0 4px !important;left:972px !important;
+			}
+			
+			.unit{
+				background-repeat:no-repeat;
+				cursor:pointer;
+			}
+			
+			.pingus{
+				width:32px;
+				height:2112px; /* 1000x2+56x2 */
+				position:absolute; 
+				left:984px;
+				top:-56px;
+				background-image:url("./res/unit/pingus.gif");
+				background-position:0 3px;				
+				-webkit-transform: rotate(-0deg);
+				-moz-transform: rotate(-0deg);
+				-ms-transform: rotate(-0deg);				
+				-o-transform: rotate(-0deg);
+				transform: rotate(-0deg);	
+				z-index:50;
+			}
+			.igloo{
+				width:264px;
+				height:2224px;	/*height of map (2000) + 2X height of img */
+				position:absolute;
+				left:868px; /*2000/2 - 264/2 */
+				top:-112px;
+				background-image:url("./res/unit/igloo1.gif");
+				background-position:0 23px;
+				-webkit-transform: rotate(-20deg);
+				-moz-transform: rotate(-20deg);
+				-ms-transform: rotate(-20deg);				
+				-o-transform: rotate(-20deg);
+				transform: rotate(-20deg);
+			}	
+
+			.pond{
+				width:124px;
+				height:2080px;	/*height of map (2000) + 2X height of img */
+				position:absolute;
+				left:944px; /*2000/2 - 174/2 */
+				top:-40px;
+				background-image:url("./res/unit/pond.gif");
+				background-position:0 44px;
+				-webkit-transform: rotate(35deg);
+				-moz-transform: rotate(35eg);
+				-ms-transform: rotate(35eg);				
+				-o-transform: rotate(35deg);
+				transform: rotate(35deg);
+			}				
+			
+			#cursor{
+				position:absolute;
+				display:none;
+				background-image:url("./res/unit/cursor.gif");
+				background-repeat:no-repeat;
+				background-position:center 0;
+				width:32px;height:32px;
+			}
+			
+			/* to control map */
+			#view{
+				width:920px;
+				margin:auto;
+				margin-bottom:20px;
+			}
+			#footer{
+				width:920px;
+				margin:auto;
+				margin-top:20px;
+				font-family:verdana;
+				font-size:8px;
+				color:#999;
+				text-align:center;
+			}
+							
+			#hud{
+				z-index:999;
+				background:#eee;
+				border:4px ridge #aaa;
+				width:888px;
+				height:130px;
+				position:absolute;
+				top:370px;
+				left:12px;
+			}
+			
+			#res{
+				z-index:999;
+				background:#aaa;
+				width:920px;
+				height:24px;
+			}
+			
+			.resCnt{
+				float:left;
+				font-family:verdana;
+				font-size:12px;
+				margin-top:4px;
+			}
+			
+			.res_fish{
+				width:40px;
+				height:24px;
+				background-image:url("./res/res/res_fish.gif");
+				float:left;
+				margin-right:5px;
+				margin-left:10px;				
+			}
+			.res_pingus{
+				width:40px;
+				height:24px;
+				background-image:url("./res/res/res_pingus.gif");
+				float:left;
+				margin-right:5px;	
+				margin-left:10px;						
+			}			
+			.res_pop{
+				width:40px;
+				height:24px;
+				background-image:url("./res/res/res_pop.gif");
+				float:left;
+				margin-right:5px;		
+				margin-left:10px;						
+			}			
+			#hud_overview{
+				width:80px; height:80px; 
+				top:12px;left:12px;
+				position:absolute;
+				border:1px solid #aaa;				
+				background-color:#fff;
+			}
+			#hud_unitName{
+				width:100; height:20px; 
+				top:100px;left:12px;
+				position:absolute;		
+				font-family:verdana;
+				font-size:9px;
+			}
+			
+			#hud_unitDesc{
+				width:200px; height:100px; 
+				top:12px;left:100px;
+				position:absolute;		
+				font-family:verdana;
+				font-size:9px;		
+			}
+			
+			#hud_actions{
+				width:200px; height:100px; 
+				top:12px;left:320px;
+				position:absolute;		
+				font-family:verdana;
+				font-size:9px;		
+			}
+			#hud_actions_desc{
+				width:200px; height:100px; 
+				top:12px;left:360px;
+				position:absolute;		
+				font-family:verdana;
+				font-size:9px;		
+			}	
+			#hud_actions_desc div{
+			width:128px; height:32px; margin-bottom:4px;
+			}
+			
+			.slot{
+				width:32px;
+				height:32px;
+				margin-bottom:4px;
+				cursor:pointer;
+				border:2px ridge #000;
+			}
+			.slot:active{border:3px ridge #000;}
+			
+			#msg{
+				font-size:12px;
+				color:#ff0000;
+				text-align:left;
+				font-family:verdana;
+				position:absolute;
+				top:30px;
+				left:40px;
+			}
+			
+			.hud_pingus{background-image:url("./res/hud/hud_pingus.gif");}
+			.hud_igloo{background-image:url("./res/hud/hud_igloo.gif");}	
+			.hud_pond{background-image:url("./res/hud/hud_pond.gif");}				
+
+			.action_igloo_upgrade{background-image:url("./res/hud/action_igloo_upgrade.gif");}
+			.action_igloo_createPingus{background-image:url("./res/hud/action_igloo_createPingus.gif");}	
+			
