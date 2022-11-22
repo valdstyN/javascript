@@ -1,12 +1,12 @@
-/**
+/*
  https://leetcode.com/problems/valid-sudoku/description/
- * @param {character[][]} board
- * @return {boolean}
+ @param {character[][]} board
+ @return {boolean}
  
  Runtime: 133 ms (beats 47.99%)
  Memory: 45.5 MB (beats 50.44%)
- 
- */
+*/
+
 var isValidSudoku = function(board) {
     let valid = true;
     // check for duplicates on a row
